@@ -1,4 +1,31 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
+    <string name="authentication_subtitle">Find a nice restaurant and invite your co-workers for lunch!</string>
+
+    <!-- Toolbar Strings -->
+    <string name="toolbar_search_title">Search</string>
+
+    <!-- NavigationDrawer Strings -->
+    <string name="drawer_your_lunch">YOUR LUNCH</string>
+    <string name="drawer_settings">SETTINGS</string>
+    <string name="drawer_logout">LOGOUT</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- BottomNavigation Strings -->
+    <string name="bottom_map_view">Map View</string>
+    <string name="bottom_list_view">List View</string>
+    <string name="bottom_workmates">Workmates</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Button authentication Strings -->
+    <string name="authentication_button_facebook">Sign in with Facebook</string>
+    <string name="authentication_button_google">Sign in with Google</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

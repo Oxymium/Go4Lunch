@@ -1,11 +1,43 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Base application Theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Authentication Title Theme. -->
+    <style name="AuthenticationTitle.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColor">@color/g4lWhite</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">70sp</item>
+    </style>
+
+    <!-- Authentication Title Theme. -->
+    <style name="AuthenticationSubtitle.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColor">@color/g4lWhite</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
+    <!-- Toolbar Theme. -->
+    <style name="Toolbar.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:textColorPrimary">@color/g4lWhite</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- NAVIGATION DRAWER THEME. -->
+    <style name="NavigationDrawer.Theme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/g4lWhite</item>
+        <item name="android:textColorSecondary">@color/g4lWhite</item>
+        <item name="android:background">@color/g4lOrange</item>
+
     </style>
 
 </resources>
