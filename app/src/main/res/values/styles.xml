@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/MyDrawerArrowToggleStyle</item>
+        <item name="buttonStyle">@style/Button.Theme</item>
+
+
     </style>
 
     <!-- Authentication Title Theme. -->
@@ -24,12 +28,18 @@
 
 
     <!-- Toolbar Theme. -->
-    <style name="Toolbar.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Toolbar.Theme" parent="ThemeOverlay.AppCompat.Dark">
         <!-- Customize your theme here. -->
         <item name="android:textColorPrimary">@color/g4lWhite</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/g4lWhite</item>
+    </style>
+
+    <!-- Toolbar's burger Theme. -->
+    <style name="MyDrawerArrowToggleStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
     </style>
 
     <!-- NAVIGATION DRAWER THEME. -->
@@ -37,7 +47,10 @@
         <item name="android:textColorPrimary">@color/g4lWhite</item>
         <item name="android:textColorSecondary">@color/g4lWhite</item>
         <item name="android:background">@color/g4lOrange</item>
-
     </style>
 
+    <!-- Authentication button Theme. -->
+    <style name="Button.Theme" parent="Widget.AppCompat.Button">
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

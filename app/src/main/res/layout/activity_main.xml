@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/g4lWhite"
-            app:itemIconTint="@color/g4lBlack"
+            app:itemIconTint="@drawable/bottom_btn_selector"
             app:itemTextColor="@color/g4lBlack"
             android:layout_alignParentBottom="true"
             app:menu="@menu/bottom_navigation_menu" />

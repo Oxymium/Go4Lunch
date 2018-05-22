@@ -4,6 +4,8 @@
 
     <!-- Toolbar Strings -->
     <string name="toolbar_search_title">Search</string>
+    <string name="toolbar_map_title">I\'m Hungry!</string>
+    <string name="toolbar_workmates_title">Available workmates</string>
 
     <!-- NavigationDrawer Strings -->
     <string name="drawer_your_lunch">YOUR LUNCH</string>
@@ -21,8 +23,11 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- Button authentication Strings -->
+    <string name="authentication_button_mail">Sign in with Mail</string>
     <string name="authentication_button_facebook">Sign in with Facebook</string>
     <string name="authentication_button_google">Sign in with Google</string>
+    <string name="authentication_button_twitter">Sign in with Twitter</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

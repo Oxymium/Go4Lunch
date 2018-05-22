@@ -11,4 +11,5 @@
     app:titleTextColor="@color/g4lWhite"
     android:textColorSecondary="@color/g4lWhite"
 
+
     />

@@ -11,11 +11,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.fragment.MapFragment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -55,12 +56,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         switch (id) {
+
             case R.id.drawer_your_lunch:
+                Toast.makeText(this, "lunch", Toast.LENGTH_LONG).show();
                 break;
+
             case R.id.drawer_settings:
+                Toast.makeText(this, "settings", Toast.LENGTH_LONG).show();
                 break;
+
             case R.id.drawer_logout:
+                Toast.makeText(this, "logout", Toast.LENGTH_LONG).show();
                 break;
+
+            case R.id.bottom_map_view:
+                Toast.makeText(this, "buttonmap", Toast.LENGTH_LONG).show();
+                mToolbar.setTitle(R.string.toolbar_map_title);
+                break;
+
+            case R.id.bottom_list_view:
+                Toast.makeText(this, "list VIEW", Toast.LENGTH_LONG).show();
+                mToolbar.setTitle(R.string.toolbar_map_title);
+                break;
+
+            case R.id.bottom_workmates:
+                Toast.makeText(this, "work VIEW", Toast.LENGTH_LONG).show();
+                mToolbar.setTitle(R.string.toolbar_workmates_title);
+                break;
+
+
             default:
                 break;
         }
@@ -69,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return true;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,13 +105,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // 1 - Configure Toolbar
     private void configureToolBar() {
-        this.mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        this.mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
     }
 
+
     // 2 - Configure Drawer Layout
     private void configureDrawerLayout() {
-        this.mDrawerLayout = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
+        this.mDrawerLayout = findViewById(R.id.activity_main_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -96,13 +120,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // 3 - Configure NavigationView
     private void configureNavigationView() {
-        this.mNavigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
+        this.mNavigationView = findViewById(R.id.activity_main_nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
     // 4 - Configure BottomNavigationView
     private void configureBottomNavigationView() {
-        this.mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        this.mBottomNavigationView = findViewById(R.id.navigation);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
+
     }
 
+    // 5 -
 }
