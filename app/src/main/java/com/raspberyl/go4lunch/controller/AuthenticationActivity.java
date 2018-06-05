@@ -6,12 +6,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.raspberyl.go4lunch.R;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class AuthenticationActivity extends AppCompatActivity {
+
+    private static final int RC_SIGN_IN = 9876;
 
     private Button mMailButton;
     private Button mFacebookButton;
@@ -26,6 +32,14 @@ public class AuthenticationActivity extends AppCompatActivity {
         initButtonDemo();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 4 - Handle SignIn Activity response on activity result
+        this.handleResponseAfterSignIn(requestCode, resultCode, data);
+    }
+
+
     private void initButtonDemo() {
 
         mMailButton = findViewById(R.id.authentication_button_mail);
@@ -36,8 +50,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         mMailButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
-                startActivity(intent);
+                startSignInActivityMail();
             }
         });
 
@@ -52,8 +65,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         mGooglePlusButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
-                startActivity(intent);
+                startSignInActivityGoogle();
             }
         });
 
@@ -65,5 +77,53 @@ public class AuthenticationActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    // Authentication mode: mail & password
+    private void startSignInActivityMail(){
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(
+                                Arrays.asList(
+                                        // Mail & Password
+                                        new AuthUI.IdpConfig.EmailBuilder().build()))
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.go4lunch_background)
+                        .build(),
+                RC_SIGN_IN);
+    }
+
+    private void startSignInActivityGoogle(){
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setTheme(R.style.LoginTheme)
+                        .setAvailableProviders(
+                                Arrays.asList(
+                                        // Mail & Password
+                                        new AuthUI.IdpConfig.GoogleBuilder().build()))
+                        .setIsSmartLockEnabled(false, true)
+                        .setLogo(R.drawable.go4lunch_background)
+                        .build(),
+                RC_SIGN_IN);
+    }
+
+    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data){
+
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) { // SUCCESS
+                startMainActivity();
+            } else { // ERRORS
+                }
+            }
+        }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }

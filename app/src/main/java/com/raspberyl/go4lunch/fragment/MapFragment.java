@@ -15,10 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.raspberyl.go4lunch.R;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -65,13 +68,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-
         MapsInitializer.initialize(getContext());
 
         mGoogleMap = googleMap;
         if (checkPermission()) {
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
 
             // Place button bottom
             //placeButtonBottom();
@@ -120,6 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         }
     }
+
 
     private void placeButtonBottom() {
 

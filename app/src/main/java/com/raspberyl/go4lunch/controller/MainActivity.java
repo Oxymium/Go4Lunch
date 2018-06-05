@@ -13,8 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.fragment.MapFragment;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -131,5 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    // 5 -
+
+
+
 }
