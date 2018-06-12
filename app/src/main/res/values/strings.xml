@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="authentication_subtitle">Find a nice restaurant and invite your co-workers for lunch!</string>
+    <string name="authentication_subtitle"><i>Find a nice restaurant and invite your co-workers for lunch!</i></string>
 
     <!-- Toolbar Strings -->
     <string name="toolbar_search_title">Search</string>
@@ -23,10 +23,20 @@
     <string name="title_activity_maps">Map</string>
 
     <!-- Button authentication Strings -->
-    <string name="authentication_button_mail">Sign in with Mail</string>
+    <string name="authentication_button_mail">Sign in with Email</string>
     <string name="authentication_button_facebook">Sign in with Facebook</string>
     <string name="authentication_button_google">Sign in with Google</string>
     <string name="authentication_button_twitter">Sign in with Twitter</string>
+
+    <!-- WorkmateView Strings -->
+    <string name="workmate_text"><B>Workmate is eating NATION (RESTAURANT)</B></string>
+
+    <!-- RestaurantView Strings -->
+    <string name="restaurant_text">Sign in with Mail</string>
+
+    <!-- Marker Strings -->
+    <string name="marker_me">Me</string>
+
 
 
     <!-- TODO: Remove or change this placeholder text -->

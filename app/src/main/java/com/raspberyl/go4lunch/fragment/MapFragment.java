@@ -3,37 +3,71 @@ package com.raspberyl.go4lunch.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.GsonBuilder;
+import com.raspberyl.go4lunch.API.ApiInterface;
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.model.Example;
+import com.raspberyl.go4lunch.model.Geometry;
+import com.raspberyl.go4lunch.model.Result;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mGoogleMap;
     private MapView mMapView;
     private View mView;
+
+    double latitude;
+    double longitude;
+    private int PROXIMITY_RADIUS = 10000;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
+    LocationRequest mLocationRequest;
 
     public MapFragment() {
         // Required empty public constructor
@@ -57,6 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Instantiate map
         mMapView = mView.findViewById(R.id.map);
         if (mMapView != null) {
             mMapView.onCreate(null);
@@ -68,63 +103,99 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        MapsInitializer.initialize(getContext());
-
         mGoogleMap = googleMap;
-        if (checkPermission()) {
-            mGoogleMap.setMyLocationEnabled(true);
-            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        //Initialize Google Play Services
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                buildGoogleApiClient();
+                mGoogleMap.setMyLocationEnabled(true);
+                build_retrofit_and_get_response("restaurant");
 
-            // Place button bottom
-            //placeButtonBottom();
-
-            LocationManager locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
-
-        } else {
-            askPermission();
-        }
-    }
-
-
-    // Check for permission to access Location
-    private boolean checkPermission() {
-        // Ask for permission if it wasn't granted yet
-        return (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED);
-    }
-
-    // Asks for permission
-    private void askPermission() {
-        ActivityCompat.requestPermissions(
-                getActivity(),
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                }, 1
-        );
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission granted
-                    if (checkPermission())
-                        mGoogleMap.setMyLocationEnabled(true);
-
-                } else {
-                    // Permission denied
-
-                }
-                break;
             }
+        } else {
+            buildGoogleApiClient();
+            mGoogleMap.setMyLocationEnabled(true);
+            build_retrofit_and_get_response("restaurant");
+
+
         }
     }
 
+    private void build_retrofit_and_get_response(String type) {
 
+        String url = "https://maps.googleapis.com/maps/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiInterface service = retrofit.create(ApiInterface.class);
+
+        Call<Example> call = service.getNearbyPlaces(type, latitude + "," + longitude, PROXIMITY_RADIUS);
+
+        call.enqueue(new Callback<Example>() {
+            @Override
+            public void onResponse(Call<Example> call, Response<Example> response) {
+
+                List<Result> test = response.body().getResults();
+                Log.w("Full「Top Stories」json", new GsonBuilder().setPrettyPrinting().create().toJson(response));
+
+                try {
+
+                    mGoogleMap.clear();
+
+                    for (int i = 0; i < response.body().getResults().size(); i++) {
+
+                        Double lat = response.body().getResults().get(i).getGeometry().getLocation().getLat();
+                        Double lng = response.body().getResults().get(i).getGeometry().getLocation().getLng();
+                        String placeName = response.body().getResults().get(i).getName();
+                        String vicinity = response.body().getResults().get(i).getVicinity();
+
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        LatLng latLng = new LatLng(lat, lng);
+                        // Position of Marker on Map
+                        markerOptions.position(latLng);
+                        // Adding Title to the Marker
+                        markerOptions.title(placeName + " : " + vicinity);
+
+                        // Adding Marker to the Camera.
+                        Marker m = mGoogleMap.addMarker(markerOptions);
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                        }
+
+                    }catch(Exception e){
+                        Log.d("onResponse", "There is an error");
+                        e.printStackTrace();
+                    }
+                }
+
+            @Override
+            public void onFailure(Call<Example> call, Throwable t) {
+                Log.d("onFailure", t.toString());
+            }
+
+        });
+
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+
+    // BUTTON TEST
     private void placeButtonBottom() {
 
         if (mMapView != null &&
@@ -142,6 +213,61 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    // INTERFACE ///////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("onLocationChanged", "entered");
+
+        mLastLocation = location;
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+        //Place current location marker
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title(getString(R.string.marker_me));
+
+        // Adding colour to the marker
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+        // Adding Marker to the Map
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+
+        Log.d("onLocationChanged", String.format("latitude:%.3f longitude:%.3f", latitude, longitude));
+
+        Log.d("onLocationChanged", "Exit");
+
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 

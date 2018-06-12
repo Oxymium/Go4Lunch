@@ -4,5 +4,17 @@
     <!-- NavigationView Header height -->
     <dimen name="navigation_header_height">200dp</dimen>
 
+    <!-- Authentication Screen Sizes -->
+    <dimen name="authentication_logo_height">200dp</dimen>
+    <dimen name="authentication_logo_width">220dp</dimen>
+    <dimen name="authentication_title_text_size">60sp</dimen>
+    <dimen name="authentication_subtitle_text_size">12sp</dimen>
+
+    <!-- Workmate View dimens -->
+    <dimen name="workmate_picture_height">70dp</dimen>
+    <dimen name="workmate_picture_width">70dp</dimen>
+
+    <dimen name="workmate_text_size">15sp</dimen>
+
 
 </resources>

@@ -11,5 +11,7 @@
 
     <color name="facebookBackgroundColor">#4F74B7</color>
     <color name="googlePlusBackgroundColor">#D14230</color>
+    <color name="twitterBackgroundColor">#1DCAFF</color>
+    <color name="emailBackgroundColor">#F34F28</color>
 
 </resources>
