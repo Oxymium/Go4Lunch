@@ -3,7 +3,7 @@ package com.raspberyl.go4lunch.API;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiClient {
+public class GoogleMapsClient {
 
     private static final String BASE_URL = "https://maps.googleapis.com/maps/";
     private static Retrofit retrofit = null;

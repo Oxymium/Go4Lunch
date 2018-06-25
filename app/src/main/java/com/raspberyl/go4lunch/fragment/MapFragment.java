@@ -4,12 +4,10 @@ package com.raspberyl.go4lunch.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -17,10 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -28,19 +24,17 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.GsonBuilder;
-import com.raspberyl.go4lunch.API.ApiInterface;
+import com.raspberyl.go4lunch.API.GoogleApiInterface;
+import com.raspberyl.go4lunch.API.RetrofitCall;
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.model.Example;
-import com.raspberyl.go4lunch.model.Geometry;
-import com.raspberyl.go4lunch.model.Result;
+import com.raspberyl.go4lunch.model.googlemaps.Example;
+import com.raspberyl.go4lunch.model.googlemaps.Result;
 
 import java.util.List;
 
@@ -49,8 +43,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -113,19 +105,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
                 mGoogleMap.setMyLocationEnabled(true);
-                build_retrofit_and_get_response("restaurant");
+                build_retrofit_and_get_response();
 
             }
         } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
-            build_retrofit_and_get_response("restaurant");
+            build_retrofit_and_get_response();
 
 
         }
     }
 
-    private void build_retrofit_and_get_response(String type) {
+    private void build_retrofit_and_get_response() {
+
+        String type = "restaurant";
+        double longitude = 0.107929;
+        double latitude = 49.49437;
+
+        /*
+        RetrofitCall retrofitCall = new RetrofitCall();
+        retrofitCall.callRetrofit(latitude, longitude, PROXIMITY_RADIUS); */
+
 
         String url = "https://maps.googleapis.com/maps/";
 
@@ -134,9 +135,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ApiInterface service = retrofit.create(ApiInterface.class);
+        GoogleApiInterface service = retrofit.create(GoogleApiInterface.class);
 
-        Call<Example> call = service.getNearbyPlaces(type, latitude + "," + longitude, PROXIMITY_RADIUS);
+        Call<Example> call = service.getNearbyRestaurants(type, latitude + "," + longitude, PROXIMITY_RADIUS);
 
         call.enqueue(new Callback<Example>() {
             @Override
@@ -183,6 +184,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         });
 
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -216,6 +218,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     // INTERFACE ///////////////////////////////////////////////////////////////////////////////////
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -225,6 +228,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
+
     }
 
     @Override
@@ -268,6 +272,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void setLongLat(Location location) {
+        mLastLocation = location;
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+    }
 }
 
 

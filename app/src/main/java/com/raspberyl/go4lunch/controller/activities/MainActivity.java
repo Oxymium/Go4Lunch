@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -42,6 +43,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
@@ -89,8 +91,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Location lastLocation = null;
     Location currentLocation = null;
 
-    private double latitudeTest;
+    public double latitudeTest;
     private double longitudeTest;
+
+    public List<Result> listTest;
 
 
     @Override
@@ -98,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        longitudeTest = 0.107929;
+        latitudeTest = 49.49437;
 
         //1 - Configuring Toolbar
         this.configureToolBar();
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 // Bottom Toolbar: ListView
             case R.id.bottom_list_view:
-                initRestaurantsFragment();
+                callRetrofit(latitudeTest, longitudeTest, PROXIMITY_RADIUS);
                 Toast.makeText(this, "list VIEW", Toast.LENGTH_LONG).show();
                 mToolbar.setTitle(R.string.toolbar_map_title);
                 break;
@@ -264,10 +269,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentManager mFragmentManager = getSupportFragmentManager();
         mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commit();
     }
-
-
-
-
 
     /////////
     //// LOCATION
@@ -506,20 +507,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         double longitude = 0.107929;
         double latitude = 49.49437;
 
+
     }
 
-    public void callRetrofit(double latitude, double longitude, int PROXIMITY_RADIUS) {
-        /*
+    public void callRetrofit(double latitudeTest, double longitudeTest, int PROXIMITY_RADIUS) {
+
         GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
 
-        Call<Example> call = service.getNearbyRestaurants("restaurant", latitude + "," + longitude, PROXIMITY_RADIUS);
+        Call<Example> call = service.getNearbyRestaurants("restaurant", latitudeTest + "," + longitudeTest, PROXIMITY_RADIUS);
 
         call.enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
 
-                List<Result> test = response.body().getResults();
-                Log.w("Nearby Restaurants", new GsonBuilder().setPrettyPrinting().create().toJson(response));
+                List<Result> listTest = response.body().getResults();
+                // Log.w("Nearby Restaurants", new GsonBuilder().setPrettyPrinting().create().toJson(listTest));
+
+                Bundle bundle = new Bundle();
+                bundle.putString("valuesArray", new Gson().toJson(listTest));
+
+                RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
+                mRestaurantsFragment.setArguments(bundle);
+                FragmentManager mFragmentManager = getSupportFragmentManager();
+                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commit();
+
 
 
                 try {
@@ -536,12 +547,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("onFailure", t.toString());
             }
 
-        }); */
+        });
 
     }
-
-
-
 
 
 

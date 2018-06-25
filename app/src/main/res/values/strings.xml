@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Go4Lunch</string>
     <string name="authentication_subtitle"><i>Find a nice restaurant and invite your co-workers for lunch!</i></string>
 
@@ -22,25 +22,55 @@
     <string name="bottom_workmates">Workmates</string>
     <string name="title_activity_maps">Map</string>
 
-    <!-- Button authentication Strings -->
+    <!-- Authentication Strings -->
     <string name="authentication_button_mail">Sign in with Email</string>
     <string name="authentication_button_facebook">Sign in with Facebook</string>
     <string name="authentication_button_google">Sign in with Google</string>
     <string name="authentication_button_twitter">Sign in with Twitter</string>
 
+    <string name="authentication_error_no_internet">Error: no internet</string>
+    <string name="authentication_error_unknown_error">Error: unknown error</string>
+    <string name="authentication_error_authentication_canceled">Error: authentication canceled</string>
+    <string name="authentication_connection_succeed">Connection succeed</string>
+
+
+
     <!-- WorkmateView Strings -->
     <string name="workmate_text"><B>Workmate is eating NATION (RESTAURANT)</B></string>
 
     <!-- RestaurantView Strings -->
-    <string name="restaurant_text">Sign in with Mail</string>
+    <string name="restaurant_view_name">Restaurant name</string>
+    <string name="restaurant_view_address">Restaurant address</string>
+    <string name="restaurant_view_distance">Restaurant distance</string>
+    <string name="restaurant_view_opening_times">Restaurant open/close</string>
+    <string name="restaurant_view_stars">Restaurant stars</string>
+    <string name="restaurant_view_workmates">Restaurant workmates</string>
+
+
 
     <!-- Marker Strings -->
     <string name="marker_me">Me</string>
+
+    <!-- RestaurantActivity Strings -->
+    <string name="restaurant_activity_button_call_text">CALL</string>
+    <string name="restaurant_activity_button_like_text">LIKE</string>
+    <string name="restaurant_activity_button_website_text">WEBSITE</string>
+
+    <string name="restaurant_activity_restaurant_name">Restaurant</string>
+    <string name="restaurant_activity_restaurant_address">Address</string>
 
 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <!-- FACEBOOK PURPOSE -->
+    <string name="facebook_application_id" translatable="false">227616504691090</string>
+    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb227616504691090</string>
+
+    <!-- TWITTER PURPOSE -->
+    <string name="twitter_consumer_key" translatable="false">fkhXvA39uBfOl1UAk3lx1xO0p</string>
+    <string name="twitter_consumer_secret" translatable="false">Iwu5b38KJJVCthxOOd2LdURTVMK0ItFYZBFWfAPtHJhnzzv3x5</string>
 
 </resources>

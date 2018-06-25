@@ -11,7 +11,6 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
 
     // Variables
     public TextView name, address, distance, workmateNumber, openingTimes;
-    public ImageView stars, preview;
 
     // Constructor
     public RestaurantsViewHolder(View view) {
@@ -22,9 +21,6 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         distance = view.findViewById(R.id.restaurant_view_distance);
         workmateNumber = view.findViewById(R.id.restaurant_view_workmates);
         openingTimes = view.findViewById(R.id.restaurant_view_opening_times);
-
-        stars = view.findViewById(R.id.restaurant_view_stars);
-        preview = view.findViewById(R.id.restaurant_view_preview);
 
     }
 }

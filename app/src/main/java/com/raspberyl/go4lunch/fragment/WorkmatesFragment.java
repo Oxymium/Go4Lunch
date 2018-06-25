@@ -11,12 +11,17 @@ import android.view.ViewGroup;
 
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
+import com.raspberyl.go4lunch.model.User;
+
+import java.util.List;
 
 public class WorkmatesFragment extends Fragment {
 
     private View mView;
     private RecyclerView mRecyclerView;
     private WorkmatesAdapter mWorkmatesAdapter;
+
+    private List<User> WORKMATESLIST;
 
     public WorkmatesFragment() {
     }
@@ -36,14 +41,11 @@ public class WorkmatesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // DO STUFF HERE
-
         /*
         mWorkmatesAdapter = new WorkmatesAdapter(WORKMATESLIST, getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mWorkmatesAdapter);
         */
-
     }
 
 }

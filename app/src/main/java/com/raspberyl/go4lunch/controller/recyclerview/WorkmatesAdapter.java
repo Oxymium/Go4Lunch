@@ -8,23 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.model.User;
 
 import java.util.List;
 
-public class WorkmatesAdapter{}
-
-/*
 public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> {
 
     // List of Workmates
-    private List<Workmate> mWorkmatesList;
+    private List<User> mWorkmatesList;
     private Context mContext;
 
     // Constructors
-    public WorkmatesAdapter(List<Workmate> mWorkmatesList, Context mContext) {
+    public WorkmatesAdapter(List<User> mWorkmatesList, Context mContext) {
         this.mWorkmatesList = mWorkmatesList;
         this.mContext = mContext;
     }
+
     @NonNull
     @Override
     public WorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,4 +45,4 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
         return 0;
     }
 
-     */
+}

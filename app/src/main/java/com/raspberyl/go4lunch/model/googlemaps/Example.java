@@ -1,13 +1,18 @@
-package com.raspberyl.go4lunch.model;
+package com.raspberyl.go4lunch.model.googlemaps;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Example {
+public class Example implements Parcelable {
 
+    // Variables
     @SerializedName("html_attributions")
     @Expose
     private List<Object> htmlAttributions = new ArrayList<Object>();
@@ -21,6 +26,15 @@ public class Example {
     @Expose
     private String status;
 
+    // Constructor
+    public Example(List<Object> htmlAttributions, String nextPageToken, List<Result> results, String status) {
+        this.htmlAttributions = htmlAttributions;
+        this.nextPageToken = nextPageToken;
+        this.results = results;
+        this.status = status;
+    }
+
+    // Getters & Setters
     /**
      *
      * @return
@@ -93,4 +107,38 @@ public class Example {
         this.status = status;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.htmlAttributions);
+        dest.writeString(this.nextPageToken);
+        dest.writeTypedList(this.results);
+        dest.writeString(this.status);
+    }
+
+    protected Example(Parcel in) {
+        this.htmlAttributions = new ArrayList<Object>();
+        in.readList(this.htmlAttributions, Object.class.getClassLoader());
+        this.nextPageToken = in.readString();
+        this.results = in.createTypedArrayList(Result.CREATOR);
+        this.status = in.readString();
+    }
+
+    public static final Parcelable.Creator<Example> CREATOR = new Parcelable.Creator<Example>() {
+        @Override
+        public Example createFromParcel(Parcel source) {
+            return new Example(source);
+        }
+
+        @Override
+        public Example[] newArray(int size) {
+            return new Example[size];
+        }
+    };
 }
+
