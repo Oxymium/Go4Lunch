@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
+import com.raspberyl.go4lunch.utils.LatLongiDistanceConverter;
 
 import java.util.List;
 
@@ -47,6 +48,22 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         // Restaurant address
         holder.address.setText(result.getVicinity());
 
+        // Restaurant opening/closing times
+        boolean isOpenNow = result.getOpeningHours().getOpenNow();
+        if (isOpenNow) {
+            holder.openingTimes.setText("is open now");
+        }else{
+            holder.openingTimes.setText("is closed now");
+        }
+
+        // Restaurant distance (m)
+        double longitudeTest = 0.107929;
+        double latitudeTest = 49.49437;
+        double targetLatitude = result.getGeometry().getLocation().getLat();
+        double targetLongitude = result.getGeometry().getLocation().getLng();
+        float distance = LatLongiDistanceConverter.distFrom((float) longitudeTest, (float) latitudeTest, (float) targetLatitude, (float) targetLongitude);
+        String distanceS = String.valueOf(distance);
+        holder.distance.setText(distanceS);
 
     }
 

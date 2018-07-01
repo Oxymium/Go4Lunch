@@ -38,7 +38,7 @@ public class RestaurantActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.acitvity_restaurant);
+        setContentView(R.layout.activity_restaurant);
 
         mPlaceId = getIntent().getStringExtra("restaurantId");
         getPlaceDetails(mPlaceId);

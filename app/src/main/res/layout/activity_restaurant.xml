@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:text="@string/restaurant_activity_button_call_text"
             android:background="@android:color/transparent"
-            android:drawableTop="@drawable/fui_ic_phone_white_24dp"
+            android:drawableTop="@drawable/call_icon_orange"
+            android:textColor="@color/g4lOrange"
             android:layout_weight="1"/>
 
         <Button
@@ -63,7 +64,8 @@
             android:layout_height="wrap_content"
             android:text="@string/restaurant_activity_button_like_text"
             android:background="@android:color/transparent"
-            android:drawableTop="@drawable/baseline_star_rate_white_24"
+            android:drawableTop="@drawable/like_icon_orange"
+            android:textColor="@color/g4lOrange"
             android:layout_weight="1"/>
 
         <Button
@@ -72,7 +74,8 @@
             android:layout_height="wrap_content"
             android:text="@string/restaurant_activity_button_website_text"
             android:background="@android:color/transparent"
-            android:drawableTop="@drawable/baseline_public_white_24"
+            android:drawableTop="@drawable/website_icon_orange"
+            android:textColor="@color/g4lOrange"
             android:layout_weight="1"/>
 
     </LinearLayout>

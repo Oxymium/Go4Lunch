@@ -53,9 +53,9 @@
     <string name="marker_me">Me</string>
 
     <!-- RestaurantActivity Strings -->
-    <string name="restaurant_activity_button_call_text">CALL</string>
-    <string name="restaurant_activity_button_like_text">LIKE</string>
-    <string name="restaurant_activity_button_website_text">WEBSITE</string>
+    <string name="restaurant_activity_button_call_text"><b>CALL</b></string>
+    <string name="restaurant_activity_button_like_text"><b>LIKE</b></string>
+    <string name="restaurant_activity_button_website_text"><b>WEBSITE</b></string>
 
     <string name="restaurant_activity_restaurant_name">Restaurant</string>
     <string name="restaurant_activity_restaurant_address">Address</string>
