@@ -50,7 +50,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         holder.address.setText(result.getVicinity());
 
 
-
     }
 
     @Override

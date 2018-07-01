@@ -31,7 +31,6 @@ public class RestaurantsFragment extends Fragment {
 
     private List<Result> mRestaurantList;
 
-
     public RestaurantsFragment() {
     }
 
@@ -41,11 +40,9 @@ public class RestaurantsFragment extends Fragment {
 
         mView = inflater.inflate(R.layout.fragment_restaurants, container, false);
 
-
         mRecyclerView = mView.findViewById(R.id.restaurants_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mRestaurantsAdapter);
-
 
         return mView;
     }

@@ -62,21 +62,18 @@ public class AuthenticationActivity extends AppCompatActivity {
                 startSignInEmail();
             }
         });
-
         mFacebookButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startSignInFacebook();
             }
         });
-
         mGooglePlusButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startSignInGooglePlus();
             }
         });
-
         mTwitterButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,8 +164,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) { // SUCCESS
                 Toast.makeText(this, this.getString(R.string.authentication_connection_succeed), Toast.LENGTH_LONG).show();
-                // createUserInFirestore();
+                createUserInFirestore();
                 startMainActivity();
+
             } else { // ERRORS
                 /*
                 if (response == null) {

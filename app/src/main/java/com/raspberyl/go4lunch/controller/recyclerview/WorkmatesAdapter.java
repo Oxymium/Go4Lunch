@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.model.User;
+import com.raspberyl.go4lunch.utils.TextReformat;
 
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     @NonNull
     @Override
     public WorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.workmate_view, parent, false);
         WorkmatesViewHolder vHolder = new WorkmatesViewHolder(itemView);
         return vHolder;
@@ -35,14 +39,26 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int position) {
 
+        final User user = mWorkmatesList.get(position);
+
         // Bind items here
 
+        holder.name.setText(user.getUsername());
+
+        if (user.getUrlPicture() != null) {
+            Glide.with(mContext)
+                    .load(user.getUrlPicture())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.picture);
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mWorkmatesList.size();
+
+
     }
 
 }

@@ -8,6 +8,8 @@
     <string name="toolbar_workmates_title">Available workmates</string>
 
     <!-- NavigationDrawer Strings -->
+    <string name="header_username"><B>Username</B></string>
+    <string name="header_usermail">Usermail</string>
     <string name="drawer_your_lunch">YOUR LUNCH</string>
     <string name="drawer_settings">SETTINGS</string>
     <string name="drawer_logout">LOGOUT</string>

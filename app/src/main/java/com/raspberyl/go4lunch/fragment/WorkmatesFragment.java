@@ -9,9 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.controller.recyclerview.RestaurantsAdapter;
 import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
 import com.raspberyl.go4lunch.model.User;
+import com.raspberyl.go4lunch.model.googlemaps.Result;
 
 import java.util.List;
 
@@ -21,7 +26,7 @@ public class WorkmatesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private WorkmatesAdapter mWorkmatesAdapter;
 
-    private List<User> WORKMATESLIST;
+    private List<User> mWorkmateList;
 
     public WorkmatesFragment() {
     }
@@ -31,7 +36,10 @@ public class WorkmatesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mView = inflater.inflate(R.layout.fragment_workmates, container, false);
+
         mRecyclerView = mView.findViewById(R.id.workmates_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mWorkmatesAdapter);
 
         return mView;
     }
@@ -41,11 +49,12 @@ public class WorkmatesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-        mWorkmatesAdapter = new WorkmatesAdapter(WORKMATESLIST, getContext());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(mWorkmatesAdapter);
-        */
+        mWorkmateList = new Gson().fromJson(getArguments().getString("userListTest"),
+                new TypeToken<List<User>>(){}.getType());
+        mWorkmatesAdapter = new WorkmatesAdapter(mWorkmateList, getContext());
+
+
+
     }
 
 }

@@ -23,8 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -43,21 +47,34 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
 import com.raspberyl.go4lunch.API.RetrofitCall;
+import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.fragment.MapFragment;
 import com.raspberyl.go4lunch.fragment.RestaurantsFragment;
 import com.raspberyl.go4lunch.fragment.WorkmatesFragment;
+import com.raspberyl.go4lunch.model.User;
 import com.raspberyl.go4lunch.model.googlemaps.Example;
 import com.raspberyl.go4lunch.model.googlemaps.Result;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private BottomNavigationView mBottomNavigationView;
+
+    private FirebaseFirestore mFirebaseFirestore;
+    private List<User> mWorkmates;
+
+    private TextView mHeaderTextUsername, mHeaderTextUsermail;
+    private ImageView mHeaderImageUserpicture;
 
     private static final int SIGN_OUT_TASK = 10;
 
@@ -110,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureDrawerLayout();
         this.configureNavigationView();
         this.configureBottomNavigationView();
+        this.updateDrawerWithPersonalData();
+        this.getAllUsers();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         checkForLocationRequest();
@@ -171,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 // Bottom Toolbar: Workmates
             case R.id.bottom_workmates:
-                initWorkmatesFragment();
+                getAllUsers();
                 Toast.makeText(this, "work VIEW", Toast.LENGTH_LONG).show();
                 mToolbar.setTitle(R.string.toolbar_workmates_title);
                 break;
@@ -247,6 +272,84 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
     }
+
+    //////////////
+    ///// Username, Addresse & Picture
+    /////////////
+
+    protected FirebaseUser getCurrentUser(){
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    protected Boolean isCurrentUserLogged(){
+        return (this.getCurrentUser() != null);
+    }
+
+    // Updates NavigationDrawer's header with user infos (username, mail & profile picture)
+    private void updateDrawerWithPersonalData() {
+
+        View header = mNavigationView.getHeaderView(0);
+        mHeaderTextUsername = header.findViewById(R.id.header_user_name);
+        mHeaderTextUsermail = header.findViewById(R.id.header_user_mail);
+        mHeaderImageUserpicture = header.findViewById(R.id.header_user_picture);
+
+        if (this.getCurrentUser().getPhotoUrl() != null) {
+            Glide.with(this)
+                    .load(this.getCurrentUser().getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mHeaderImageUserpicture);
+        }
+
+        if (this.getCurrentUser() != null) {
+            String username = getCurrentUser().getDisplayName();
+            String usermail = getCurrentUser().getEmail();
+            mHeaderTextUsername.setText(username);
+            mHeaderTextUsermail.setText(usermail);
+        }
+    }
+
+    //////////////
+    ///// LIST GETTER TEST
+    ////////////
+
+    private void getAllUsers() {
+
+        mWorkmates = new ArrayList<>();
+        mFirebaseFirestore = FirebaseFirestore.getInstance();
+
+        mFirebaseFirestore.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    // error
+                }
+
+                for (DocumentChange doc : queryDocumentSnapshots.getDocumentChanges()) {
+
+                    User user = doc.getDocument().toObject(User.class);
+                    mWorkmates.add(user);
+
+                }
+
+                Bundle testbundle = new Bundle();
+                testbundle.putString("userListTest", new Gson().toJson(mWorkmates));
+                Log.w("USERLISTTEST", new GsonBuilder().setPrettyPrinting().create().toJson(mWorkmates));
+
+
+                WorkmatesFragment mWorkmatesFragment = new WorkmatesFragment();
+                mWorkmatesFragment.setArguments(testbundle);
+                FragmentManager mFragmentManager = getSupportFragmentManager();
+                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commit();
+
+            }
+
+    });
+
+
+    }
+
+
 
     //////////////
     ///// FRAGMENTS

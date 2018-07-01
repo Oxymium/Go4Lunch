@@ -10,13 +10,16 @@ import com.raspberyl.go4lunch.R;
 public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
     // Variables
-    public TextView textView1, textView2;
+    public TextView name, textView2;
     public ImageView picture;
 
     // Constructor
     public WorkmatesViewHolder(View view) {
         super(view);
 
+        name = view.findViewById(R.id.workmate_view_text);
+
+        picture = view.findViewById(R.id.workmate_view_picture);
         /*
         textView1 = view.findViewById(R.id.article_category);
         textView2 = view.findViewById(R.id.article_content);
