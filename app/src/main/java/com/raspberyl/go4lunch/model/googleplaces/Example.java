@@ -1,16 +1,12 @@
-package com.raspberyl.go4lunch.model.googlemaps;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.raspberyl.go4lunch.model.googleplaces;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Example implements Parcelable {
+public class Example {
 
     // Variables
     @SerializedName("html_attributions")
@@ -108,37 +104,5 @@ public class Example implements Parcelable {
     }
 
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(this.htmlAttributions);
-        dest.writeString(this.nextPageToken);
-        dest.writeTypedList(this.results);
-        dest.writeString(this.status);
-    }
-
-    protected Example(Parcel in) {
-        this.htmlAttributions = new ArrayList<Object>();
-        in.readList(this.htmlAttributions, Object.class.getClassLoader());
-        this.nextPageToken = in.readString();
-        this.results = in.createTypedArrayList(Result.CREATOR);
-        this.status = in.readString();
-    }
-
-    public static final Parcelable.Creator<Example> CREATOR = new Parcelable.Creator<Example>() {
-        @Override
-        public Example createFromParcel(Parcel source) {
-            return new Example(source);
-        }
-
-        @Override
-        public Example[] newArray(int size) {
-            return new Example[size];
-        }
-    };
 }
 

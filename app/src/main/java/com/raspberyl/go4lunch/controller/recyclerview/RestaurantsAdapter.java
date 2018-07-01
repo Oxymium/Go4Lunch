@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.model.googlemaps.Example;
-import com.raspberyl.go4lunch.model.googlemaps.Result;
-import com.raspberyl.go4lunch.utils.ItemClickSupport;
+import com.raspberyl.go4lunch.model.googleplaces.Result;
 
 import java.util.List;
 
@@ -56,6 +54,11 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
     public int getItemCount() {
 
         return mRestaurantList.size();
+    }
+
+    // Itemclick?
+    public Result getRestaurant(int position){
+        return this.mRestaurantList.get(position);
     }
 
 

@@ -2,10 +2,9 @@ package com.raspberyl.go4lunch.API;
 
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.gson.GsonBuilder;
-import com.raspberyl.go4lunch.model.googlemaps.Example;
-import com.raspberyl.go4lunch.model.googlemaps.Result;
+import com.raspberyl.go4lunch.model.googleplaces.Example;
+import com.raspberyl.go4lunch.model.googleplaces.Result;
 
 import java.util.List;
 

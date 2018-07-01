@@ -9,14 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.controller.recyclerview.RestaurantsAdapter;
 import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
 import com.raspberyl.go4lunch.model.User;
-import com.raspberyl.go4lunch.model.googlemaps.Result;
 
 import java.util.List;
 

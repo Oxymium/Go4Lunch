@@ -1,7 +1,4 @@
-package com.raspberyl.go4lunch.model.googlemaps;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.raspberyl.go4lunch.model.googleplaces;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Result implements Parcelable {
+public class Result {
 
     // Variables
     @SerializedName("geometry")
@@ -305,56 +302,5 @@ public class Result implements Parcelable {
         this.priceLevel = priceLevel;
     }
 
-    // Parcelable
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.geometry, flags);
-        dest.writeString(this.icon);
-        dest.writeString(this.id);
-        dest.writeString(this.name);
-        dest.writeParcelable(this.openingHours, flags);
-        dest.writeTypedList(this.photos);
-        dest.writeString(this.placeId);
-        dest.writeValue(this.rating);
-        dest.writeString(this.reference);
-        dest.writeString(this.scope);
-        dest.writeStringList(this.types);
-        dest.writeString(this.vicinity);
-        dest.writeValue(this.priceLevel);
-    }
-
-    protected Result(Parcel in) {
-        this.geometry = in.readParcelable(Geometry.class.getClassLoader());
-        this.icon = in.readString();
-        this.id = in.readString();
-        this.name = in.readString();
-        this.openingHours = in.readParcelable(OpeningHours.class.getClassLoader());
-        this.photos = in.createTypedArrayList(Photo.CREATOR);
-        this.placeId = in.readString();
-        this.rating = (Double) in.readValue(Double.class.getClassLoader());
-        this.reference = in.readString();
-        this.scope = in.readString();
-        this.types = in.createStringArrayList();
-        this.vicinity = in.readString();
-        this.priceLevel = (Integer) in.readValue(Integer.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
-        @Override
-        public Result createFromParcel(Parcel source) {
-            return new Result(source);
-        }
-
-        @Override
-        public Result[] newArray(int size) {
-            return new Result[size];
-        }
-    };
 }
 

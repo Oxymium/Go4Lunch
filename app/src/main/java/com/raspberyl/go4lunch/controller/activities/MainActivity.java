@@ -6,7 +6,6 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -49,9 +48,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -60,17 +57,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
-import com.raspberyl.go4lunch.API.RetrofitCall;
-import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.fragment.MapFragment;
 import com.raspberyl.go4lunch.fragment.RestaurantsFragment;
 import com.raspberyl.go4lunch.fragment.WorkmatesFragment;
 import com.raspberyl.go4lunch.model.User;
-import com.raspberyl.go4lunch.model.googlemaps.Example;
-import com.raspberyl.go4lunch.model.googlemaps.Result;
+import com.raspberyl.go4lunch.model.googleplaces.Example;
+import com.raspberyl.go4lunch.model.googleplaces.Result;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureNavigationView();
         this.configureBottomNavigationView();
         this.updateDrawerWithPersonalData();
-        this.getAllUsers();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         checkForLocationRequest();
@@ -450,7 +443,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     latitudeTest = currentLocation.getLatitude();
                     longitudeTest = currentLocation.getLongitude();
                     System.out.println("LONG & LATITUDE" + "" + latitudeTest + "" + longitudeTest);
-                    callRetrofit(latitudeTest, longitudeTest, PROXIMITY_RADIUS);
                 }
             }, Looper.myLooper());
 
@@ -478,7 +470,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             latitudeTest = currentLocation.getLatitude();
                             longitudeTest = currentLocation.getLongitude();
                             System.out.println("LONG & LATITUDE" + "" + latitudeTest + "" + longitudeTest);
-                            callRetrofit(latitudeTest, longitudeTest, PROXIMITY_RADIUS);
                         } else {
                             showSnackbar("No Last known location found. Try current location..!");
                         }

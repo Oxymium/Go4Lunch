@@ -1,16 +1,12 @@
-package com.raspberyl.go4lunch.model.googlemaps;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.raspberyl.go4lunch.model.googleplaces;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpeningHours implements Parcelable {
+public class OpeningHours {
 
     // Variables
     @SerializedName("open_now")
@@ -58,33 +54,5 @@ public class OpeningHours implements Parcelable {
     }
 
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(this.openNow);
-        dest.writeList(this.weekdayText);
-    }
-
-    protected OpeningHours(Parcel in) {
-        this.openNow = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        this.weekdayText = new ArrayList<Object>();
-        in.readList(this.weekdayText, Object.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<OpeningHours> CREATOR = new Parcelable.Creator<OpeningHours>() {
-        @Override
-        public OpeningHours createFromParcel(Parcel source) {
-            return new OpeningHours(source);
-        }
-
-        @Override
-        public OpeningHours[] newArray(int size) {
-            return new OpeningHours[size];
-        }
-    };
 }
 
