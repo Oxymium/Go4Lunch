@@ -17,10 +17,17 @@
         <dimen name="authentication_subtitle_text_size">12sp</dimen>
 
     <!-- Workmate View dimens -->
-        <dimen name="workmate_picture_height">70dp</dimen>
-        <dimen name="workmate_picture_width">70dp</dimen>
+        <dimen name="workmate_picture_height">60dp</dimen>
+        <dimen name="workmate_picture_width">60dp</dimen>
 
         <dimen name="workmate_text_size">15sp</dimen>
+        <dimen name="divider_size">120dp</dimen>
+
+    <!-- RestaurantActivity dimens -->
+        <dimen name="activity_restaurant_name_text_size">20sp</dimen>
+        <dimen name="activity_restaurant_address_text_size">15sp</dimen>
+
+
 
 
 </resources>

@@ -4,7 +4,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.raspberyl.go4lunch.model.User;
+import com.raspberyl.go4lunch.model.firebase.User;
 
 public class UserHelper {
 
@@ -18,9 +18,9 @@ public class UserHelper {
 
     // --- CREATE ---
 
-    public static Task<Void> createUser(String uid, String username, String urlPicture) {
+    public static Task<Void> createUser(String uid, String username, String urlPicture, String chosenRestaurantId) {
         // 1 - Create Obj
-        User userToCreate = new User(uid, username, urlPicture);
+        User userToCreate = new User(uid, username, urlPicture, chosenRestaurantId);
 
         return UserHelper.getUsersCollection().document(uid).set(userToCreate);
     }
@@ -31,10 +31,22 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(uid).get();
     }
 
+    public static Task<DocumentSnapshot> getChosenRestaurantId(String chosenRestaurantId) {
+        return UserHelper.getUsersCollection().document(chosenRestaurantId).get();
+    }
+
     // --- UPDATE ---
 
     public static Task<Void> updateUsername(String username, String uid) {
         return UserHelper.getUsersCollection().document(uid).update("username", username);
+    }
+
+    public static Task<Void> updateIsMentor(String uid, Boolean isMentor) {
+        return UserHelper.getUsersCollection().document(uid).update("isMentor", isMentor);
+    }
+
+    public static Task<Void> updateChosenRestaurantId(String chosenRestaurantId, String uid) {
+        return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantId", chosenRestaurantId);
     }
 
 

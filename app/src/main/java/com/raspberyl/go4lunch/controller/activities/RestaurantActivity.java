@@ -6,17 +6,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
+import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.model.googledetails.Details;
 import com.raspberyl.go4lunch.model.googledetails.Result;
@@ -28,11 +33,13 @@ import retrofit2.Response;
 public class RestaurantActivity extends AppCompatActivity {
 
     private Button mRestaurantCallButton, mRestaurantWebsiteButton, mRestaurantLikeButton;
+    private FloatingActionButton mGoRestaurantButton;
     private TextView mRestaurantNameText, mRestaurantAddressText;
+    private ImageView mRestaurantImageView;
 
     private Result mResult;
 
-    private String mPlaceId;
+    private String mPlaceId, mPhotoId;
 
 
     @Override
@@ -41,6 +48,7 @@ public class RestaurantActivity extends AppCompatActivity {
         setContentView(R.layout.activity_restaurant);
 
         mPlaceId = getIntent().getStringExtra("restaurantId");
+        mPhotoId = getIntent().getStringExtra("restaurantPicture");
         getPlaceDetails(mPlaceId);
         /*mRestaurantNameText = findViewById(R.id.activity_restaurant_name);
         mRestaurantNameText.setText(mResult.getName()); */
@@ -66,6 +74,8 @@ public class RestaurantActivity extends AppCompatActivity {
                     mResult = response.body().getResult();
                     Log.w("RESTAURANT DETAILS", new GsonBuilder().setPrettyPrinting().create().toJson(mResult));
 
+                    // set: restaurant picture
+                    setRestaurantPictureBackground();
                     // set: name
                     setRestaurantName(mResult);
                     // set: address
@@ -74,6 +84,8 @@ public class RestaurantActivity extends AppCompatActivity {
                     initRestaurantCallButton(mResult);
                     // init: restaurant website button (webview)
                     initRestaurantWebsiteButton(mResult);
+                    // init: go restaurant website (restaurant choice)
+                    initGoButton(mResult);
 
 
 
@@ -93,9 +105,25 @@ public class RestaurantActivity extends AppCompatActivity {
 
     }
 
-    // ------------------
-    // TextViews
-    // ------------------
+    // ------------------------
+    // Text & ImageViews update
+    // ------------------------
+
+    private void setRestaurantPictureBackground() {
+
+        mRestaurantImageView = findViewById(R.id.activity_restaurant_restaurant_picture);
+
+        if (mPhotoId != null) {
+            String restaurantPictureUrl = "https://maps.googleapis.com/maps/api/place/photo" +
+                    "?maxwidth=600" + "&maxheight=300" +
+                    "&photoreference=" + mPhotoId +
+                    "&key=AIzaSyDqefrTQHVLLodQoTiQWHpIWRUofSV1SUw";
+
+            Glide.with(this)
+                    .load(restaurantPictureUrl)
+                    .into(mRestaurantImageView);
+        }
+    }
 
     private void setRestaurantName(Result result) {
         mRestaurantNameText = findViewById(R.id.activity_restaurant_name);
@@ -105,7 +133,9 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private void setRestaurantAddress(Result result) {
         mRestaurantAddressText = findViewById(R.id.activity_restaurant_address);
-        mRestaurantAddressText.setText(result.getFormattedAddress());
+        String vicinity = result.getFormattedAddress();
+        String displayedAddress = vicinity.split(",")[0];
+        mRestaurantAddressText.setText(displayedAddress);
     }
 
     // --------
@@ -156,7 +186,24 @@ public class RestaurantActivity extends AppCompatActivity {
         });
     }
 
+    // Like Button
     private void initRestaurantLikeButton() {}
+
+    // Choose restaurant (Go) Button
+    private void initGoButton(Result result) {
+
+        final String chosenRestaurantId = result.getPlace_id();
+
+        mGoRestaurantButton = findViewById(R.id.restaurant_activity_go_button);
+        mGoRestaurantButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+            }
+
+        });
+    }
+
 
     // ------------
     // ERROR DIALOG

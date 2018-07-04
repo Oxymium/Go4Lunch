@@ -10,7 +10,7 @@ import com.raspberyl.go4lunch.R;
 public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
     // Variables
-    public TextView name, textView2;
+    public TextView name;
     public ImageView picture;
 
     // Constructor
@@ -20,12 +20,7 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         name = view.findViewById(R.id.workmate_view_text);
 
         picture = view.findViewById(R.id.workmate_view_picture);
-        /*
-        textView1 = view.findViewById(R.id.article_category);
-        textView2 = view.findViewById(R.id.article_content);
-        imageView1 = view.findViewById(R.id.article_date);
-        imageView2 = view.findViewById(R.id.article_thumbnail);
-        */
+
     }
 }
 

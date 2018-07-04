@@ -1,88 +1,116 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="100">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/go4lunch_background"/>
-
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="15"
-        android:background="@color/g4lOrange"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/activity_restaurant_name"
+            android:id="@+id/activity_restaurant_restaurant_picture"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_activity_restaurant_name"
-            />
+            android:layout_height="0dp"
+            android:layout_weight="30"
+            android:background="@drawable/go4lunch_background"
+            android:orientation="horizontal"
+            android:scaleType="fitXY"/>
 
-        <TextView
-            android:id="@+id/activity_restaurant_address"
+        <LinearLayout
+            android:id="@+id/viewB"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_activity_restaurant_address"
-            />
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            android:background="@color/g4lOrange"
+            android:orientation="vertical">
+            
+            <TextView
+                android:id="@+id/activity_restaurant_name"
+                android:textSize="@dimen/activity_restaurant_name_text_size"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/g4lWhite"
+                android:text="@string/restaurant_activity_restaurant_name"/>
 
+            <TextView
+                android:id="@+id/activity_restaurant_address"
+                android:textSize="@dimen/activity_restaurant_address_text_size"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/g4lWhite"
+                android:text="@string/restaurant_activity_restaurant_address"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            android:weightSum="3"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/activity_restaurant_button_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_activity_button_call_text"
+                android:drawableTop="@drawable/baseline_restaurant_white_24"
+                android:background="@color/fui_transparent"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/g4lOrange"
+                android:drawableTint="@color/g4lOrange"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/activity_restaurant_button_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_activity_button_like_text"
+                android:drawableTop="@drawable/baseline_star_rate_white_24"
+                android:background="@color/fui_transparent"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/g4lOrange"
+                android:drawableTint="@color/g4lOrange"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/activity_restaurant_button_website"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_activity_button_website_text"
+                android:drawableTop="@drawable/baseline_public_white_24"
+                android:background="@color/fui_transparent"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/g4lOrange"
+                android:tint="@color/g4lOrange"
+                android:drawableTint="@color/g4lOrange"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="15"
-        android:weightSum="3">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/restaurant_activity_go_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:src="@drawable/go4lunch_logo"
+        app:layout_anchor="@id/activity_restaurant_restaurant_picture"
+        app:layout_anchorGravity="bottom|right|end"/>
 
-        <Button
-            android:id="@+id/activity_restaurant_button_call"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_activity_button_call_text"
-            android:background="@android:color/transparent"
-            android:drawableTop="@drawable/call_icon_orange"
-            android:textColor="@color/g4lOrange"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/activity_restaurant_button_like"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_activity_button_like_text"
-            android:background="@android:color/transparent"
-            android:drawableTop="@drawable/like_icon_orange"
-            android:textColor="@color/g4lOrange"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/activity_restaurant_button_website"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_activity_button_website_text"
-            android:background="@android:color/transparent"
-            android:drawableTop="@drawable/website_icon_orange"
-            android:textColor="@color/g4lOrange"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="30"></LinearLayout>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

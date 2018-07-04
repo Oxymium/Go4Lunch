@@ -8,6 +8,8 @@
     <color name="g4lDarkerOrange">#B41C10</color>
     <color name="g4lWhite">#FFFFFF</color>
     <color name="g4lBlack">#000000</color>
+    <color name="g4lDivider">#B7B7B7</color>
+
 
     <color name="facebookBackgroundColor">#4F74B7</color>
     <color name="googlePlusBackgroundColor">#D14230</color>

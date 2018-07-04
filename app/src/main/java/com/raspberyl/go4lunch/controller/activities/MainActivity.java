@@ -61,7 +61,7 @@ import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.fragment.MapFragment;
 import com.raspberyl.go4lunch.fragment.RestaurantsFragment;
 import com.raspberyl.go4lunch.fragment.WorkmatesFragment;
-import com.raspberyl.go4lunch.model.User;
+import com.raspberyl.go4lunch.model.firebase.User;
 import com.raspberyl.go4lunch.model.googleplaces.Example;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
 

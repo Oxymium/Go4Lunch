@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,6 +45,13 @@ public class RestaurantsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mRestaurantsAdapter);
 
+        // Add custom divider between Recycler's views
+        com.raspberyl.go4lunch.utils.DividerItemDecoration mDividerItemDecoration = new com.raspberyl.go4lunch.utils.DividerItemDecoration(
+                mRecyclerView.getContext(), R.drawable.horizontal_divider);
+        mRecyclerView.addItemDecoration(mDividerItemDecoration);
+
+
+
         this.configureOnClickRecyclerView();
 
         return mView;
@@ -70,14 +78,18 @@ public class RestaurantsFragment extends Fragment {
                         @Override
                         public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
-                            Result result = mRestaurantsAdapter.getRestaurant(position);
+                            Result result = mRestaurantsAdapter.getRestaurantPosition(position);
                             // 2 - Show result in a Toast
                             Toast.makeText(getContext(), "You clicked on restaurant: "+result.getName(), Toast.LENGTH_SHORT).show();
 
-                            // Pass restaurant ID to activity with intent
+                            // Pass restaurant ID & Picture to activity with intent
                             Intent startRestaurantActivity = new Intent(getContext(), RestaurantActivity.class);
                             startRestaurantActivity.putExtra("restaurantId", result.getPlaceId());
+                            if (result.getPhotos().get(0).getPhotoReference() != null) {
+                            startRestaurantActivity.putExtra("restaurantPicture", result.getPhotos().get(0).getPhotoReference());
+                            }
                             startActivity(startRestaurantActivity);
+
 
                         }
                     });

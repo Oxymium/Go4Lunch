@@ -1,4 +1,4 @@
-package com.raspberyl.go4lunch.model;
+package com.raspberyl.go4lunch.model.firebase;
 
 import android.support.annotation.Nullable;
 
@@ -8,16 +8,18 @@ public class User {
     private String username;
     @Nullable
     private String urlPicture;
+    private String chosenRestaurantId;
 
 
     public User() {
     }
 
     // Contructor
-    public User(String uid, String username, String urlPicture) {
+    public User(String uid, String username, String urlPicture, String chosenRestaurantId) {
         this.uid = uid;
         this.username = username;
         this.urlPicture = urlPicture;
+        this.chosenRestaurantId = chosenRestaurantId;
 
     }
 
@@ -34,6 +36,8 @@ public class User {
         return urlPicture;
     }
 
+    public String getChosenRestaurantId() { return chosenRestaurantId; }
+
 
 
     // Setters
@@ -48,6 +52,8 @@ public class User {
     public void setUrlPicture(String urlPicture) {
         this.urlPicture = urlPicture;
     }
+
+   public void setChosenRestaurantId(String chosenRestaurantId) { this.chosenRestaurantId = chosenRestaurantId; }
 
 }
 

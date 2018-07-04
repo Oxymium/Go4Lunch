@@ -16,10 +16,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.model.firebase.User;
 
 import java.util.Arrays;
 
@@ -32,6 +36,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     private Button mGooglePlusButton;
     private Button mTwitterButton;
     private CoordinatorLayout mCoordinatorLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,16 +200,36 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private void createUserInFirestore(){
 
-        if (this.getCurrentUser() != null){
+        UserHelper.getChosenRestaurantId(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
-            String username = this.getCurrentUser().getDisplayName();
-            String uid = this.getCurrentUser().getUid();
+                    User currentUser = documentSnapshot.toObject(User.class);
 
-            UserHelper.createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener());
-        }
+                    if (currentUser == null) {
+
+                        String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
+                        String username = getCurrentUser().getDisplayName();
+                        String uid = getCurrentUser().getUid();
+                        String userChosenRestaurantId = "";
+
+                        UserHelper.createUser(uid, username, urlPicture, userChosenRestaurantId).addOnFailureListener(onFailureListener());
+
+                    }else {
+
+                        String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
+                        String username = getCurrentUser().getDisplayName();
+                        String uid = getCurrentUser().getUid();
+                        String userChosenRestaurantId = currentUser.getChosenRestaurantId();
+
+                        UserHelper.createUser(uid, username, urlPicture, userChosenRestaurantId).addOnFailureListener(onFailureListener());
+
+                    }
+
+                }
+            });
+
     }
-
 
     private void startMainActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);

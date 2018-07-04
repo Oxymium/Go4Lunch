@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.model.User;
-import com.raspberyl.go4lunch.utils.TextReformat;
+import com.raspberyl.go4lunch.model.firebase.User;
 
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
 
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.workmate_view, parent, false);
         WorkmatesViewHolder vHolder = new WorkmatesViewHolder(itemView);
+
         return vHolder;
     }
 
@@ -58,7 +58,11 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     public int getItemCount() {
         return mWorkmatesList.size();
 
+    }
 
+    // Itemclick?
+    public User getUserPosition(int position){
+        return this.mWorkmatesList.get(position);
     }
 
 }

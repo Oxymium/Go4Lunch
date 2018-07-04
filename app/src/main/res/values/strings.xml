@@ -38,15 +38,15 @@
 
 
     <!-- WorkmateView Strings -->
-    <string name="workmate_text"><B>Workmate is eating NATION (RESTAURANT)</B></string>
+    <string name="workmate_text">User hasn\'t decided yet</string>
 
     <!-- RestaurantView Strings -->
-    <string name="restaurant_view_name">Restaurant name</string>
-    <string name="restaurant_view_address">Restaurant address</string>
-    <string name="restaurant_view_distance">Restaurant distance</string>
-    <string name="restaurant_view_opening_times">Restaurant open/close</string>
-    <string name="restaurant_view_stars">Restaurant stars</string>
-    <string name="restaurant_view_workmates">Restaurant workmates</string>
+    <string name="restaurant_view_name"><b>Name</b></string>
+    <string name="restaurant_view_address">Address</string>
+    <string name="restaurant_view_distance">Distance</string>
+    <string name="restaurant_view_opening_times">open/close</string>
+    <string name="restaurant_view_stars">stars</string>
+    <string name="restaurant_view_workmates">workmates</string>
 
 
     <!-- Marker Strings -->

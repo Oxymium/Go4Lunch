@@ -8,12 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
-import com.raspberyl.go4lunch.model.User;
+import com.raspberyl.go4lunch.model.firebase.User;
+import com.raspberyl.go4lunch.utils.DividerItemDecoration;
+import com.raspberyl.go4lunch.utils.ItemClickSupport;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class WorkmatesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private WorkmatesAdapter mWorkmatesAdapter;
 
-    private List<User> mWorkmateList;
+    private List<User> mWorkmatesList;
 
     public WorkmatesFragment() {
     }
@@ -38,6 +41,13 @@ public class WorkmatesFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mWorkmatesAdapter);
 
+        // Add custom divider between Recycler's views
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(
+                mRecyclerView.getContext(), R.drawable.custom_divider);
+        mRecyclerView.addItemDecoration(mDividerItemDecoration);
+
+        this.configureOnClickRecyclerView();
+
         return mView;
     }
 
@@ -46,12 +56,31 @@ public class WorkmatesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mWorkmateList = new Gson().fromJson(getArguments().getString("userListTest"),
+        mWorkmatesList = new Gson().fromJson(getArguments().getString("userListTest"),
                 new TypeToken<List<User>>(){}.getType());
-        mWorkmatesAdapter = new WorkmatesAdapter(mWorkmateList, getContext());
-
-
+        mWorkmatesAdapter = new WorkmatesAdapter(mWorkmatesList, getContext());
 
     }
+
+    // ItemClick listener
+    private void configureOnClickRecyclerView () {
+        ItemClickSupport.addTo(mRecyclerView, R.layout.fragment_workmates)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        User user = mWorkmatesAdapter.getUserPosition(position);
+                        // 2 - Show result in a Toast
+                        Toast.makeText(getContext(), "You clicked on workmate: " + user.getUsername(), Toast.LENGTH_SHORT).show();
+
+                        // Pass restaurant ID to activity with intent
+                        /*Intent startRestaurantActivity = new Intent(getContext(), RestaurantActivity.class);
+                        startRestaurantActivity.putExtra("restaurantId", result.getPlaceId());
+                        startActivity(startRestaurantActivity); */
+                    }
+                });
+
+    }
+
 
 }
