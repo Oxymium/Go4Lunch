@@ -2,6 +2,8 @@ package com.raspberyl.go4lunch.model.firebase;
 
 import android.support.annotation.Nullable;
 
+import java.util.List;
+
 public class User {
 
     private String uid;
@@ -9,18 +11,19 @@ public class User {
     @Nullable
     private String urlPicture;
     private String chosenRestaurantId;
+    private String chosenRestaurantName;
+    private String chosenRestaurantUrlPicture;
 
-
-    public User() {
-    }
+    public User() {}
 
     // Contructor
-    public User(String uid, String username, String urlPicture, String chosenRestaurantId) {
+    public User(String uid, String username, String urlPicture, String chosenRestaurantId, String chosenRestaurantName, String chosenRestaurantUrlPicture) {
         this.uid = uid;
         this.username = username;
         this.urlPicture = urlPicture;
         this.chosenRestaurantId = chosenRestaurantId;
-
+        this.chosenRestaurantName = chosenRestaurantName;
+        this.chosenRestaurantUrlPicture = chosenRestaurantUrlPicture;
     }
 
     // Getters
@@ -38,6 +41,13 @@ public class User {
 
     public String getChosenRestaurantId() { return chosenRestaurantId; }
 
+    public String getChosenRestaurantName() {
+        return chosenRestaurantName;
+    }
+
+    public String getChosenRestaurantUrlPicture() {
+        return chosenRestaurantUrlPicture;
+    }
 
 
     // Setters
@@ -53,7 +63,16 @@ public class User {
         this.urlPicture = urlPicture;
     }
 
-   public void setChosenRestaurantId(String chosenRestaurantId) { this.chosenRestaurantId = chosenRestaurantId; }
+    public void setChosenRestaurantId(String chosenRestaurantId) { this.chosenRestaurantId = chosenRestaurantId; }
+
+    public void setChosenRestaurantName(String chosenRestaurantName) {
+        this.chosenRestaurantName = chosenRestaurantName;
+    }
+
+    public void setChosenRestaurantUrlPicture(String chosenRestaurantUrlPicture) {
+        this.chosenRestaurantUrlPicture = chosenRestaurantUrlPicture;
+    }
+
 
 }
 

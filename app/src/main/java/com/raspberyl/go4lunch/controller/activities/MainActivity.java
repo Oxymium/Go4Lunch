@@ -1,6 +1,7 @@
 package com.raspberyl.go4lunch.controller.activities;
 
 import android.Manifest;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -31,8 +32,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -42,6 +46,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,6 +57,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -57,13 +66,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
+import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.fragment.MapFragment;
-import com.raspberyl.go4lunch.fragment.RestaurantsFragment;
-import com.raspberyl.go4lunch.fragment.WorkmatesFragment;
+import com.raspberyl.go4lunch.controller.fragment.MapFragment;
+import com.raspberyl.go4lunch.controller.fragment.RestaurantsFragment;
+import com.raspberyl.go4lunch.controller.fragment.WorkmatesFragment;
 import com.raspberyl.go4lunch.model.firebase.User;
+import com.raspberyl.go4lunch.model.googledetails.Details;
 import com.raspberyl.go4lunch.model.googleplaces.Example;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
+import com.raspberyl.go4lunch.utils.AlertDialogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +85,8 @@ import javax.annotation.Nullable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -96,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int REQUEST_PERMISSIONS_LAST_LOCATION_REQUEST_CODE = 444;
     private static final int REQUEST_PERMISSIONS_CURRENT_LOCATION_REQUEST_CODE = 555;
 
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
     private FusedLocationProviderClient mFusedLocationClient;
 
     protected Location mLastLocation;
@@ -112,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private double longitudeTest;
 
     public List<Result> listTest;
+    private com.raspberyl.go4lunch.model.googledetails.Result mMyLunch;
 
 
     @Override
@@ -137,7 +154,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.initMapFragment();
     }
 
-    // NAVIGATION
+    // ----------------
+    // NAVIGATION MENUS
+    // ----------------
+
+    // Configure Toolbar
+    private void configureToolBar() {
+        this.mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+    }
+
+    // Configure DrawerLayout
+    private void configureDrawerLayout() {
+        this.mDrawerLayout = findViewById(R.id.activity_main_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    // Configure NavigationView
+    private void configureNavigationView() {
+        this.mNavigationView = findViewById(R.id.activity_main_nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    // Configure BottomNavigationView
+    private void configureBottomNavigationView() {
+        this.mBottomNavigationView = findViewById(R.id.navigation);
+        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -149,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    // Handle MenuItem interaction
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -157,37 +204,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
 
-                // Drawer: Your Lunch
+            // Drawer: Your Lunch
             case R.id.drawer_your_lunch:
-                Toast.makeText(this, "lunch", Toast.LENGTH_LONG).show();
+                getChosenRestaurantId();
                 break;
 
-                // Drawer: Settings
+            // Drawer: Settings
             case R.id.drawer_settings:
                 startSettingsActivity();
                 break;
 
-                // Drawer: Logout
+            // Drawer: Logout
             case R.id.drawer_logout:
                 Toast.makeText(this, "logout", Toast.LENGTH_LONG).show();
                 this.logoutUserFromFirebase();
                 break;
 
-                // Bottom Toolbar: MapView
+            // Bottom Toolbar: MapView
             case R.id.bottom_map_view:
                 initMapFragment();
                 Toast.makeText(this, "buttonmap", Toast.LENGTH_LONG).show();
                 mToolbar.setTitle(R.string.toolbar_map_title);
                 break;
 
-                // Bottom Toolbar: ListView
+            // Bottom Toolbar: ListView
             case R.id.bottom_list_view:
                 callRetrofit(latitudeTest, longitudeTest, PROXIMITY_RADIUS);
                 Toast.makeText(this, "list VIEW", Toast.LENGTH_LONG).show();
                 mToolbar.setTitle(R.string.toolbar_map_title);
                 break;
 
-                // Bottom Toolbar: Workmates
+            // Bottom Toolbar: Workmates
             case R.id.bottom_workmates:
                 getAllUsers();
                 Toast.makeText(this, "work VIEW", Toast.LENGTH_LONG).show();
@@ -204,50 +251,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    // Inflate the menu and add it to the Toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //2 - Inflate the menu and add it to the Toolbar
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
         return true;
     }
 
-    // ----
+    // Toolbar search listener
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Menu item actions
+        switch (item.getItemId()) {
+            // Start SearchActivity from the「Search」item
+            case R.id.menu_activity_main_search:
+                Toast.makeText(this, "SEARCH CLICK", Toast.LENGTH_LONG).show();
+                showAutoCompleteFragment();
 
-    // 1 - Configure Toolbar
-    private void configureToolBar() {
-        this.mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
+    // ------------------------------------------
+    // UPDATE NAVIGATIONDRAWER WITH PERSONAL DATA
+    // ------------------------------------------
 
-    // 2 - Configure Drawer Layout
-    private void configureDrawerLayout() {
-        this.mDrawerLayout = findViewById(R.id.activity_main_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+    protected FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    // 3 - Configure NavigationView
-    private void configureNavigationView() {
-        this.mNavigationView = findViewById(R.id.activity_main_nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-    }
-
-    // 4 - Configure BottomNavigationView
-    private void configureBottomNavigationView() {
-        this.mBottomNavigationView = findViewById(R.id.navigation);
-        mBottomNavigationView.setOnNavigationItemSelectedListener(this);
-
-    }
-
-    // Start SettingsActivity
-    private void startSettingsActivity() {
-        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    private void logoutUserFromFirebase(){
+    // Logout
+    private void logoutUserFromFirebase() {
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnSuccessListener(this, this.updateUIAfterRESTRequestsCompleted(SIGN_OUT_TASK));
@@ -264,18 +301,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         };
-    }
-
-    //////////////
-    ///// Username, Addresse & Picture
-    /////////////
-
-    protected FirebaseUser getCurrentUser(){
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    protected Boolean isCurrentUserLogged(){
-        return (this.getCurrentUser() != null);
     }
 
     // Updates NavigationDrawer's header with user infos (username, mail & profile picture)
@@ -301,9 +326,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    //////////////
-    ///// LIST GETTER TEST
-    ////////////
+    // ------------------------------
+    // FETCH ALL USERS FROM FIRESTORE
+    // ------------------------------
 
     private void getAllUsers() {
 
@@ -327,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Bundle testbundle = new Bundle();
                 testbundle.putString("userListTest", new Gson().toJson(mWorkmates));
-                Log.w("USERLISTTEST", new GsonBuilder().setPrettyPrinting().create().toJson(mWorkmates));
+                //Log.w("USERLISTTEST", new GsonBuilder().setPrettyPrinting().create().toJson(mWorkmates));
 
 
                 WorkmatesFragment mWorkmatesFragment = new WorkmatesFragment();
@@ -337,16 +362,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
 
-    });
+        });
 
 
     }
 
-
-
-    //////////////
-    ///// FRAGMENTS
-    /////////////
+    // ---------
+    // FRAGMENTS
+    // ---------
 
     private void initMapFragment() {
         MapFragment mMapFragment = new MapFragment();
@@ -366,9 +389,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commit();
     }
 
-    /////////
-    //// LOCATION
-    /////////
+    private void showAutoCompleteFragment() {
+        try {
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .build(this);
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
+    // --------
+    // LOCATION
+    // --------
 
     @Override
     protected void onResume() {
@@ -517,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void checkForLocationRequest(){
+    public void checkForLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(MIN_UPDATE_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -592,9 +628,88 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    ////////////////
-    //// RETROFIT
-    ////////////////
+    // -------------------------------
+    // YOUR CURRENT LUNCH/ MESSAGE BOX
+    // -------------------------------
+
+    // Fetch User chosenRestaurantId
+    private void getChosenRestaurantId() {
+
+     UserHelper.getChosenRestaurantId(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        @Override
+        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+            User currentUser = documentSnapshot.toObject(User.class);
+            String userChosenRestaurantId = currentUser.getChosenRestaurantId();
+
+            // Retrofit Call + Restaurant ID if it exists
+            if (!userChosenRestaurantId.isEmpty()) {
+                checkYourLunchDetails(userChosenRestaurantId);
+            // Else, dsplay AlertDialog with no restaurant
+            } else {
+                showYourLunchAlertDialog("no current", "lunch");
+            }
+        }
+
+     });
+
+    }
+
+    // Fetch Details about User's chosen restaurant based on ID
+    private void checkYourLunchDetails(String placeId) {
+
+        GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
+
+        Call<Details> call = service.getRestaurantDetails(placeId);
+
+        call.enqueue(new Callback<Details>() {
+            @Override
+            public void onResponse(Call<Details> call, Response<Details> response) {
+
+                try {
+
+                    mMyLunch = response.body().getResult();
+                    //Log.w("RESTAURANT DETAILS", new GsonBuilder().setPrettyPrinting().create().toJson(mMyLunch));
+                    showYourLunchAlertDialog(mMyLunch.getName(), mMyLunch.getFormattedAddress());
+
+                } catch (Exception e) {
+                    Log.d("onResponse", "There is an error");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Details> call, Throwable t) {
+                Log.d("onFailure", t.toString());
+            }
+
+        });
+
+    }
+
+
+    private void showYourLunchAlertDialog(String restaurantName, String restaurantAddress) {
+        String reformatedAddress = restaurantAddress.split(",")[0];
+        AlertDialogUtil dialogUtil = new AlertDialogUtil();
+        dialogUtil.createAlertDialog(MainActivity.this,
+                getResources().getString(R.string.alertdialog_your_lunch),
+                restaurantName + "\n" + reformatedAddress,
+                getResources().getString(R.string.alertdialog_button_neutral));
+    }
+
+    // -----------------
+    // Activity Intents
+    // -----------------
+
+    // Start SettingsActivity
+    private void startSettingsActivity() {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    // -------------
+    // Retrofit API
+    // -------------
 
     private void buildRetrofitAndGetResponse() {
         // Test variables

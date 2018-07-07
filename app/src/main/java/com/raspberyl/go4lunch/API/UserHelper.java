@@ -6,6 +6,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.raspberyl.go4lunch.model.firebase.User;
 
+import java.util.List;
+
 public class UserHelper {
 
     private static final String COLLECTION_NAME = "users";
@@ -18,10 +20,9 @@ public class UserHelper {
 
     // --- CREATE ---
 
-    public static Task<Void> createUser(String uid, String username, String urlPicture, String chosenRestaurantId) {
-        // 1 - Create Obj
-        User userToCreate = new User(uid, username, urlPicture, chosenRestaurantId);
+    public static Task<Void> createUser(String uid, String username, String urlPicture, String chosenRestaurantId, String chosenRestaurantName, String chosenRestaurantUrlPicture) {
 
+        User userToCreate = new User(uid, username, urlPicture, chosenRestaurantId, chosenRestaurantName, chosenRestaurantUrlPicture);
         return UserHelper.getUsersCollection().document(uid).set(userToCreate);
     }
 
@@ -48,6 +49,15 @@ public class UserHelper {
     public static Task<Void> updateChosenRestaurantId(String chosenRestaurantId, String uid) {
         return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantId", chosenRestaurantId);
     }
+
+    public static Task<Void> updateChosenRestaurantName(String chosenRestaurantName, String uid) {
+        return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantName", chosenRestaurantName);
+    }
+
+    public static Task<Void> updateChosenRestaurantUrlPicture(String chosenRestaurantUrlPicture, String uid) {
+        return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantUrlPicture", chosenRestaurantUrlPicture);
+    }
+
 
 
     // --- DELETE ---

@@ -10,21 +10,40 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
+import com.raspberyl.go4lunch.API.RestaurantHelper;
 import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
+import com.raspberyl.go4lunch.model.firebase.User;
 import com.raspberyl.go4lunch.model.googledetails.Details;
 import com.raspberyl.go4lunch.model.googledetails.Result;
+import com.raspberyl.go4lunch.utils.AlertDialogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,9 +56,15 @@ public class RestaurantActivity extends AppCompatActivity {
     private TextView mRestaurantNameText, mRestaurantAddressText;
     private ImageView mRestaurantImageView;
 
+    private RecyclerView mRecyclerView;
+    private WorkmatesAdapter mWormatesAdapter;
+
     private Result mResult;
 
     private String mPlaceId, mPhotoId;
+    private List<User> wormatesOnThatRestaurant;
+
+    private ListView mListView;
 
 
     @Override
@@ -47,11 +72,16 @@ public class RestaurantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
 
+        // Get PlaceId and PhotoId from Intents
         mPlaceId = getIntent().getStringExtra("restaurantId");
         mPhotoId = getIntent().getStringExtra("restaurantPicture");
+
         getPlaceDetails(mPlaceId);
-        /*mRestaurantNameText = findViewById(R.id.activity_restaurant_name);
-        mRestaurantNameText.setText(mResult.getName()); */
+
+        mRecyclerView = findViewById(R.id.activity_restaurant_recycler);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
     }
 
@@ -59,6 +89,7 @@ public class RestaurantActivity extends AppCompatActivity {
     // API
     // ------------------
 
+    // Check place details from PlaceID string
     public void getPlaceDetails(String placeId) {
 
         GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
@@ -72,7 +103,6 @@ public class RestaurantActivity extends AppCompatActivity {
                 try {
 
                     mResult = response.body().getResult();
-                    Log.w("RESTAURANT DETAILS", new GsonBuilder().setPrettyPrinting().create().toJson(mResult));
 
                     // set: restaurant picture
                     setRestaurantPictureBackground();
@@ -86,8 +116,10 @@ public class RestaurantActivity extends AppCompatActivity {
                     initRestaurantWebsiteButton(mResult);
                     // init: go restaurant website (restaurant choice)
                     initGoButton(mResult);
+                    // init: like button
+                    initRestaurantLikeButton(mResult);
 
-
+                    getAllUsersOnCurrentRestaurant(mResult);
 
 
                 } catch (Exception e) {
@@ -187,46 +219,86 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     // Like Button
-    private void initRestaurantLikeButton() {}
+    private void initRestaurantLikeButton(Result result) {
+
+        final String chosenRestaurantId = result.getPlace_id();
+
+        mRestaurantLikeButton = findViewById(R.id.activity_restaurant_button_like);
+        mRestaurantLikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Add like
+                RestaurantHelper.createRestaurant(chosenRestaurantId, 1);
+
+            }
+        });
+
+    }
 
     // Choose restaurant (Go) Button
     private void initGoButton(Result result) {
 
         final String chosenRestaurantId = result.getPlace_id();
+        final String chosenRestaurantName = result.getName();
 
         mGoRestaurantButton = findViewById(R.id.restaurant_activity_go_button);
         mGoRestaurantButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Push infos on Database (Restaurant ID, Restaurant Name, & Picture URL)
                 UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                UserHelper.updateChosenRestaurantName(chosenRestaurantName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                UserHelper.updateChosenRestaurantUrlPicture(mPhotoId, FirebaseAuth.getInstance().getCurrentUser().getUid());
             }
 
         });
     }
 
+    // ----------
+    // RECYCLER VIEW
+    // ----------
 
-    // ------------
-    // ERROR DIALOG
-    // ------------
+    private void getAllUsersOnCurrentRestaurant(Result result) {
 
-    public void showNoWebsiteDialogError() {
-        // Build an AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(RestaurantActivity.this, R.style.AlertDialog_Style);
-        // Set Title and Message content
-        builder.setTitle(R.string.alertdialog_error);
-        builder.setMessage(getText(R.string.alertdialog_content_no_website_error));
-        // Neutral button
-        builder.setNeutralButton(R.string.alertdialog_button_neutral, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        final String restaurantId = result.getPlace_id();
+        wormatesOnThatRestaurant = new ArrayList<>();
 
-        builder.show();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", mPlaceId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                    if (e != null) {
+                        // error
+                    }
+
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        User user = doc.toObject(User.class);
+                        wormatesOnThatRestaurant.add(user);
+
+                    }
+
+                    Log.w("U ON THAT RESTAURANT", new GsonBuilder().setPrettyPrinting().create().toJson(wormatesOnThatRestaurant));
+                    if (wormatesOnThatRestaurant == null) {
+                        mWormatesAdapter = new WorkmatesAdapter(wormatesOnThatRestaurant, getApplicationContext());
+                        mRecyclerView.setAdapter(mWormatesAdapter);
+                    }
+                }
+            });
 
     }
 
 
+    // ------------
+    // ALERT DIALOG
+    // ------------
+
+    private void showNoWebsiteDialogError() {
+        AlertDialogUtil dialogUtil = new AlertDialogUtil();
+        dialogUtil.createAlertDialog(RestaurantActivity.this,
+                getResources().getString(R.string.alertdialog_error),
+                getResources().getString(R.string.alertdialog_content_no_website_error),
+                getResources().getString(R.string.alertdialog_button_neutral));
+    }
 
 }

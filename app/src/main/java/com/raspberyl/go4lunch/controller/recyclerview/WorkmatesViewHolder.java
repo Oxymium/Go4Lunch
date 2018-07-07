@@ -18,7 +18,6 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         super(view);
 
         name = view.findViewById(R.id.workmate_view_text);
-
         picture = view.findViewById(R.id.workmate_view_picture);
 
     }

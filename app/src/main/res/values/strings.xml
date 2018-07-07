@@ -67,6 +67,7 @@
 
     <!-- Alertdialog Strings -->
     <string name="alertdialog_error">Error</string>
+    <string name="alertdialog_your_lunch">Your current lunch!</string>
     <string name="alertdialog_content_no_website_error">Sorry, it looks like this Restaurant has no website yet! :(</string>
     <string name="alertdialog_button_neutral">OK</string>
 

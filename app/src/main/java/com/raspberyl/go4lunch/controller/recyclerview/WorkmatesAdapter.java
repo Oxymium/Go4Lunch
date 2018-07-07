@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.model.firebase.User;
 
@@ -43,14 +46,20 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
 
         // Bind items here
 
-        holder.name.setText(user.getUsername());
+        // Workmate name
+        if (user.getChosenRestaurantName().isEmpty())
+        holder.name.setText(user.getUsername() + "hasn't decided yet");
+        else holder.name.setText(user.getUsername() + "is eating at" + user.getChosenRestaurantName());
 
+        // Workmate picture
         if (user.getUrlPicture() != null) {
             Glide.with(mContext)
                     .load(user.getUrlPicture())
                     .apply(RequestOptions.circleCropTransform())
                     .into(holder.picture);
         }
+
+
 
     }
 
@@ -64,5 +73,6 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     public User getUserPosition(int position){
         return this.mWorkmatesList.get(position);
     }
+
 
 }

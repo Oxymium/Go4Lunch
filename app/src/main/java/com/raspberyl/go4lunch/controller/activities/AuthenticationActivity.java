@@ -25,7 +25,9 @@ import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.model.firebase.User;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -43,7 +45,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        this.initButtonDemo();
+        this.initButtons();
     }
 
     @Override
@@ -52,9 +54,11 @@ public class AuthenticationActivity extends AppCompatActivity {
         // 4 - Handle SignIn Activity response on activity result
         this.handleResponseAfterSignIn(requestCode, resultCode, data);
     }
+    // -------
+    // Buttons
+    // -------
 
-
-    private void initButtonDemo() {
+    private void initButtons() {
 
         mMailButton = findViewById(R.id.authentication_button_mail);
         mFacebookButton = findViewById(R.id.authentication_button_facebook);
@@ -88,11 +92,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     }
 
-    // Transparent borders
-    private void setTransparentTest() {
-        Window w =getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-    }
+    // --------------------
+    // Authentication modes
+    // --------------------
 
     // Authentication mode: mail & password, Facebook, Google+ & Twitter
     private void startSignInEmail(){
@@ -102,7 +104,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(
                                 Arrays.asList(
-                                        // Mail & Password
                                         new AuthUI.IdpConfig.EmailBuilder().build()))
                         .setIsSmartLockEnabled(false, true)
                         .setLogo(R.drawable.go4lunch_logo)
@@ -110,6 +111,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 RC_SIGN_IN);
     }
 
+    // Authentication mode: Facebook
     private void startSignInFacebook(){
         startActivityForResult(
                 AuthUI.getInstance()
@@ -117,7 +119,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(
                                 Arrays.asList(
-                                        // Facebook
                                         new AuthUI.IdpConfig.FacebookBuilder().build()))
                         //new AuthUI.IdpConfig.TwitterBuilder().build()))
                         .setIsSmartLockEnabled(false, true)
@@ -126,6 +127,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 RC_SIGN_IN);
     }
 
+    // Authentication mode: Google+
     private void startSignInGooglePlus(){
         startActivityForResult(
                 AuthUI.getInstance()
@@ -133,15 +135,15 @@ public class AuthenticationActivity extends AppCompatActivity {
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(
                                 Arrays.asList(
-                                        // GooglePlus
+
                                         new AuthUI.IdpConfig.GoogleBuilder().build()))
-                        //new AuthUI.IdpConfig.TwitterBuilder().build()))
                         .setIsSmartLockEnabled(false, true)
                         .setLogo(R.drawable.go4lunch_logo)
                         .build(),
                 RC_SIGN_IN);
     }
 
+    // Authentication mode: Twitter
     private void startSignInTwitter(){
         startActivityForResult(
                 AuthUI.getInstance()
@@ -159,8 +161,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-
-
     // 3 - Method that handles response after SignIn Activity close
     private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data){
 
@@ -176,7 +176,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 /*
                 if (response == null) {
                     showSnackBar(this.mCoordinatorLayout, getString(R.string.authentication_error_authentication_canceled));
-                } else if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                } else if (response.getError() == "ERROR_INVALID_CUSTOM_TOKEN" ) {
                     showSnackBar(this.mCoordinatorLayout, getString(R.string.authentication_error_no_internet));
                 } else if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                     showSnackBar(this.mCoordinatorLayout, getString(R.string.authentication_error_unknown_error));
@@ -184,6 +184,10 @@ public class AuthenticationActivity extends AppCompatActivity {
             }
         }
     }
+
+    // ------------------------
+    // Create user in Firestore
+    // ------------------------
 
     protected FirebaseUser getCurrentUser(){
         return FirebaseAuth.getInstance().getCurrentUser();
@@ -198,9 +202,10 @@ public class AuthenticationActivity extends AppCompatActivity {
         };
     }
 
+    // Create user if it doesn't exist already
     private void createUserInFirestore(){
 
-        UserHelper.getChosenRestaurantId(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        UserHelper.getUser(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -212,17 +217,13 @@ public class AuthenticationActivity extends AppCompatActivity {
                         String username = getCurrentUser().getDisplayName();
                         String uid = getCurrentUser().getUid();
                         String userChosenRestaurantId = "";
+                        String userChosenRestaurantName = "";
+                        String userChosenRestaurantUrlPicture = "";
 
-                        UserHelper.createUser(uid, username, urlPicture, userChosenRestaurantId).addOnFailureListener(onFailureListener());
+                        UserHelper.createUser(uid, username, urlPicture, userChosenRestaurantId, userChosenRestaurantName, userChosenRestaurantUrlPicture).addOnFailureListener(onFailureListener());
 
                     }else {
 
-                        String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
-                        String username = getCurrentUser().getDisplayName();
-                        String uid = getCurrentUser().getUid();
-                        String userChosenRestaurantId = currentUser.getChosenRestaurantId();
-
-                        UserHelper.createUser(uid, username, urlPicture, userChosenRestaurantId).addOnFailureListener(onFailureListener());
 
                     }
 
@@ -230,6 +231,10 @@ public class AuthenticationActivity extends AppCompatActivity {
             });
 
     }
+
+    // ------
+    // Intent
+    // ------
 
     private void startMainActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
