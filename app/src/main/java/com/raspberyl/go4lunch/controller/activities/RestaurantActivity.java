@@ -57,14 +57,14 @@ public class RestaurantActivity extends AppCompatActivity {
     private ImageView mRestaurantImageView;
 
     private RecyclerView mRecyclerView;
-    private WorkmatesAdapter mWormatesAdapter;
+    private WorkmatesAdapter mWorkmatesAdapter;
 
     private Result mResult;
 
     private String mPlaceId, mPhotoId;
-    private List<User> wormatesOnThatRestaurant;
+    private List<User> workmatesOnThatRestaurant;
 
-    private ListView mListView;
+    private List<User> test;
 
 
     @Override
@@ -78,9 +78,18 @@ public class RestaurantActivity extends AppCompatActivity {
 
         getPlaceDetails(mPlaceId);
 
+        // Init ArrayList
+        workmatesOnThatRestaurant = new ArrayList<>();
+        workmatesOnThatRestaurant.clear();
+
+        mWorkmatesAdapter = new WorkmatesAdapter(workmatesOnThatRestaurant, getApplicationContext());
         mRecyclerView = findViewById(R.id.activity_restaurant_recycler);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setAdapter(mWorkmatesAdapter);
+        // mWormatesAdapter.notifyDataSetChanged();
+
+
 
 
     }
@@ -261,9 +270,8 @@ public class RestaurantActivity extends AppCompatActivity {
     private void getAllUsersOnCurrentRestaurant(Result result) {
 
         final String restaurantId = result.getPlace_id();
-        wormatesOnThatRestaurant = new ArrayList<>();
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", mPlaceId).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -274,17 +282,17 @@ public class RestaurantActivity extends AppCompatActivity {
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         User user = doc.toObject(User.class);
-                        wormatesOnThatRestaurant.add(user);
-
+                        workmatesOnThatRestaurant.add(user);
                     }
 
-                    Log.w("U ON THAT RESTAURANT", new GsonBuilder().setPrettyPrinting().create().toJson(wormatesOnThatRestaurant));
-                    if (wormatesOnThatRestaurant == null) {
-                        mWormatesAdapter = new WorkmatesAdapter(wormatesOnThatRestaurant, getApplicationContext());
-                        mRecyclerView.setAdapter(mWormatesAdapter);
-                    }
+                    Log.w("U ON THAT RESTAURANT", new GsonBuilder().setPrettyPrinting().create().toJson(workmatesOnThatRestaurant));
+                    mWorkmatesAdapter.notifyDataSetChanged();
+
+
                 }
-            });
+
+
+        });
 
     }
 

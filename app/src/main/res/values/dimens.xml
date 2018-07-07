@@ -11,14 +11,47 @@
         <dimen name="navigation_header_user_name_mail_size">10sp</dimen>
 
     <!-- Authentication Screen Sizes -->
-        <dimen name="authentication_logo_height">200dp</dimen>
+        <!-- Logo Sizes -->
+        <dimen name="authentication_logo_height">180dp</dimen>
         <dimen name="authentication_logo_width">220dp</dimen>
+        <dimen name="authentication_logo_marginTop">30dp</dimen>
+
+        <!-- Title text Sizes -->
         <dimen name="authentication_title_text_size">60sp</dimen>
         <dimen name="authentication_subtitle_text_size">12sp</dimen>
 
+        <!-- Authentication Buttons Sizes -->
+        <dimen name="authentication_button_height">50dp</dimen>
+        <dimen name="authentication_button_width">280dp</dimen>
+        <dimen name="authentication_button_padding_start">10dp</dimen>
+        <dimen name="authentication_button_padding_end">20dp</dimen>
+
+    <!-- Restaurant View dimens -->
+        <!-- Margins -->
+        <dimen name="view_restaurant_margin_top">8dp</dimen>
+        <dimen name="view_restaurant_margin_bottom">15dp</dimen>
+        <dimen name="view_restaurant_margin_start">8dp</dimen>
+        <dimen name="view_restaurant_margin_end">8dp</dimen>
+
+         <!-- Paddings -->
+        <dimen name="view_restaurant_padding_bottom">10dp</dimen>
+
+        <!-- Text Sizes -->
+        <dimen name="view_restaurant_name_text_size">15sp</dimen>
+        <dimen name="view_restaurant_distance_text_size">10sp</dimen>
+        <dimen name="view_restaurant_address_text_size">10sp</dimen>
+        <dimen name="view_restaurant_hours_text_size">10sp</dimen>
+
+        <!-- Restaurant Picture Sizes -->
+        <dimen name="view_restaurant_picture_height">60dp</dimen>
+        <dimen name="view_restaurant_picture_width">60dp</dimen>
+
+
+
+
     <!-- Workmate View dimens -->
-        <dimen name="workmate_picture_height">60dp</dimen>
-        <dimen name="workmate_picture_width">60dp</dimen>
+        <dimen name="workmate_picture_height">100dp</dimen>
+        <dimen name="workmate_picture_width">100dp</dimen>
 
         <dimen name="workmate_text_size">15sp</dimen>
         <dimen name="divider_size">120dp</dimen>

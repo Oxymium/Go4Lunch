@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@drawable/go4lunch_background">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/g4lunchbackgroundauthentication">
 
     <ImageView
         android:id="@+id/authentication_logo"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="@dimen/authentication_logo_marginTop"
         android:layout_width="@dimen/authentication_logo_width"
         android:layout_height="@dimen/authentication_logo_height"
         android:layout_centerHorizontal="true"
@@ -17,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/authentication_logo"
         android:layout_centerHorizontal="true"
+        android:textStyle="bold"
         android:text="@string/app_name"
         android:textColor="@color/g4lWhite"
         android:textSize="@dimen/authentication_title_text_size" />
@@ -27,55 +29,64 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/authentication_title"
         android:layout_centerHorizontal="true"
+        android:textStyle="italic"
         android:text="@string/authentication_subtitle"
         android:textColor="@color/g4lWhite"
         android:textSize="@dimen/authentication_subtitle_text_size" />
 
     <Button
         android:id="@+id/authentication_button_mail"
-        android:layout_width="268dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/authentication_button_width"
+        android:layout_height="@dimen/authentication_button_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="200dp"
         android:background="@drawable/email_roundedbutton"
         android:drawableStart="@drawable/ic_email_white_24dp"
+        android:paddingStart="@dimen/authentication_button_padding_start"
+        android:paddingEnd="@dimen/authentication_button_padding_end"
         android:text="@string/authentication_button_mail"
         android:textColor="@color/g4lWhite" />
 
     <Button
         android:id="@+id/authentication_button_facebook"
-        android:layout_width="274dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/authentication_button_width"
+        android:layout_height="@dimen/authentication_button_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="140dp"
         android:background="@drawable/facebook_roundedbutton"
         android:drawableStart="@drawable/ic_facebook_white_24dp"
+        android:paddingStart="@dimen/authentication_button_padding_start"
+        android:paddingEnd="@dimen/authentication_button_padding_end"
         android:text="@string/authentication_button_facebook"
         android:textColor="@color/g4lWhite" />
 
     <Button
         android:id="@+id/authentication_button_google"
-        android:layout_width="265dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/authentication_button_width"
+        android:layout_height="@dimen/authentication_button_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="84dp"
         android:background="@drawable/google_plus_roundedbutton"
         android:drawableStart="@drawable/ic_google_plus_white_24dp"
+        android:paddingStart="@dimen/authentication_button_padding_start"
+        android:paddingEnd="@dimen/authentication_button_padding_end"
         android:text="@string/authentication_button_google"
         android:textColor="@color/g4lWhite" />
 
     <Button
         android:id="@+id/authentication_button_twitter"
-        android:layout_width="266dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/authentication_button_width"
+        android:layout_height="@dimen/authentication_button_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="27dp"
         android:background="@drawable/twitter_roundedbutton"
         android:drawableStart="@drawable/ic_twitter_white_24dp"
+        android:paddingStart="@dimen/authentication_button_padding_start"
+        android:paddingEnd="@dimen/authentication_button_padding_end"
         android:text="@string/authentication_button_twitter"
         android:textColor="@color/g4lWhite" />
 

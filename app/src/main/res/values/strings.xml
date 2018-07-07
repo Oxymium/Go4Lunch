@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Go4Lunch</string>
-    <string name="authentication_subtitle"><i>Find a nice restaurant and invite your co-workers for lunch!</i></string>
+    <string name="authentication_subtitle">Find a nice restaurant and invite your co-workers for lunch!</string>
 
     <!-- Toolbar Strings -->
     <string name="toolbar_search_title">Search</string>
@@ -35,8 +35,6 @@
     <string name="authentication_error_authentication_canceled">Error: authentication canceled</string>
     <string name="authentication_connection_succeed">Connection succeed</string>
 
-
-
     <!-- WorkmateView Strings -->
     <string name="workmate_text">User hasn\'t decided yet</string>
 
@@ -60,10 +58,10 @@
     <string name="restaurant_activity_restaurant_name">Restaurant</string>
     <string name="restaurant_activity_restaurant_address">Address</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_title">Your lunch!</string>
+    <string name="default_notification_channel_id">Test</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Alertdialog Strings -->
     <string name="alertdialog_error">Error</string>

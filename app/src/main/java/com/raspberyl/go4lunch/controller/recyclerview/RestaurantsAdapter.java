@@ -99,7 +99,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         // Restaurant picture
         if (result.getPhotos().get(0).getPhotoReference() != null) {
             String restaurantPictureUrl = "https://maps.googleapis.com/maps/api/place/photo" +
-                    "?maxwidth=80" + "&maxheight=80" +
+                    "?maxwidth=100" + "&maxheight=100" +
                     "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
                     "&key=AIzaSyDqefrTQHVLLodQoTiQWHpIWRUofSV1SUw";
 

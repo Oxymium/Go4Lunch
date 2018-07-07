@@ -6,60 +6,72 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
-    <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-        <TextView
-            android:id="@+id/restaurant_view_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_weight="60"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/restaurant_view_name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/restaurant_view_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/restaurant_view_name"
-            android:layout_marginEnd="20dp"
-            android:text="@string/restaurant_view_distance"
-            app:layout_constraintEnd_toStartOf="@+id/restaurant_view_picture"
-            tools:layout_editor_absoluteY="8dp" />
+            <TextView
+                android:id="@+id/restaurant_view_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/view_restaurant_margin_start"
+                android:layout_marginTop="@dimen/view_restaurant_margin_top"
+                android:paddingBottom="@dimen/view_restaurant_padding_bottom"
+                android:text="@string/restaurant_view_name"
+                android:textStyle="bold"
+                android:textSize="@dimen/view_restaurant_name_text_size"
+                android:singleLine="true"
+                />
 
-        <TextView
-            android:id="@+id/restaurant_view_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/restaurant_view_name"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/restaurant_view_address"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_view_name" />
+            <TextView
+                android:id="@+id/restaurant_view_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/view_restaurant_padding_bottom"
+                android:layout_marginStart="@dimen/view_restaurant_margin_start"
+                android:text="@string/restaurant_view_address" />
 
-        <TextView
-            android:id="@+id/restaurant_view_opening_times"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/restaurant_view_opening_times"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/view_restaurant_padding_bottom"
+
+                android:layout_marginStart="@dimen/view_restaurant_margin_start"
+                android:text="@string/restaurant_view_opening_times" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="20"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/restaurant_view_picture"
-            android:layout_alignStart="@+id/restaurant_view_name"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/restaurant_view_opening_times"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_view_address" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/restaurant_view_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/view_restaurant_distance_text_size"
+                android:paddingBottom="@dimen/view_restaurant_padding_bottom"
+                android:layout_marginTop="@dimen/view_restaurant_margin_top"
+                android:layout_marginEnd="@dimen/view_restaurant_margin_end"
+                android:text="@string/restaurant_view_distance" />
+
+            <TextView
+                android:id="@+id/restaurant_view_workmates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/view_restaurant_padding_bottom"
+                android:text="@string/restaurant_view_workmates" />
 
             <ImageView
                 android:id="@+id/restaurant_view_stars"
@@ -67,36 +79,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/restaurant_view_workmates"
-            android:layout_width="wrap_content"
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="30"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/restaurant_view_address"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_toEndOf="@+id/restaurant_view_address"
-            android:text="@string/restaurant_view_workmates"
-            app:layout_constraintEnd_toStartOf="@+id/restaurant_view_picture"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_view_distance" />
+            android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/restaurant_view_picture"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/restaurant_view_name"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="2"
-            android:background="@drawable/go4lunch_logo"
-            android:scaleType="fitXY"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/restaurant_view_picture"
+                android:layout_width="@dimen/view_restaurant_picture_width"
+                android:layout_height="@dimen/view_restaurant_picture_height"
+                android:layout_marginEnd="@dimen/view_restaurant_margin_end"
+                android:layout_marginTop="@dimen/view_restaurant_margin_top"
+                android:layout_marginBottom="@dimen/view_restaurant_padding_bottom"
+                android:background="@drawable/go4lunch_logo"
+                android:scaleType="fitXY" />
+
+        </LinearLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+
 
 
 </android.support.design.widget.CoordinatorLayout>

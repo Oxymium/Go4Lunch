@@ -39,7 +39,6 @@ public class AuthenticationActivity extends AppCompatActivity {
     private Button mTwitterButton;
     private CoordinatorLayout mCoordinatorLayout;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
