@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.R;
+import com.raspberyl.go4lunch.controller.activities.MainActivity;
 import com.raspberyl.go4lunch.model.googleplaces.Example;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
 
@@ -55,7 +56,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     double latitude;
     double longitude;
-    private int PROXIMITY_RADIUS = 10000;
+    private int PROXIMITY_RADIUS = 1000;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
@@ -98,6 +99,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        longitude = MainActivity.longitudeTest;
+        latitude = MainActivity.latitudeTest;
+
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getContext(),
@@ -107,7 +111,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.setOnMyLocationButtonClickListener(this);
                 mGoogleMap.setOnMyLocationClickListener(this);
-                build_retrofit_and_get_response();
+                build_retrofit_and_get_response(longitude, latitude);
 
             }
         } else {
@@ -115,7 +119,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.setOnMyLocationButtonClickListener(this);
             mGoogleMap.setOnMyLocationClickListener(this);
-            build_retrofit_and_get_response();
+            build_retrofit_and_get_response(longitude, latitude);
 
 
         }
@@ -145,7 +149,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); */
+            LocationServices.FusedLocatioApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); */
 
     }
 
@@ -168,9 +172,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             mCurrLocationMarker.remove();
         }
         //Place current location marker
+        /*
         latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        longitude = location.getLongitude(); */
+        latitude = MainActivity.latitudeTest;
+        longitude = MainActivity.longitudeTest;
+        LatLng latLng = new LatLng(latitude, longitude);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title(getString(R.string.marker_me));
@@ -197,11 +204,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    private void build_retrofit_and_get_response() {
+    private void build_retrofit_and_get_response(double longitude, double latitude) {
 
         String type = "restaurant";
-        double longitude = 0.107929;
-        double latitude = 49.49437;
 
         /*
         RetrofitCall retrofitCall = new RetrofitCall();

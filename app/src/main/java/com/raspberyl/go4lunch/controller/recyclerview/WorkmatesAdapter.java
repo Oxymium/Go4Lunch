@@ -1,6 +1,7 @@
 package com.raspberyl.go4lunch.controller.recyclerview;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -47,21 +48,44 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
         // Bind items here
 
         // Workmate name
-        if (user.getChosenRestaurantName().isEmpty())
-        holder.name.setText(user.getUsername() + "hasn't decided yet");
-        else holder.name.setText(user.getUsername() + "is eating at" + user.getChosenRestaurantName());
+        String displayedUsername = (user.getUsername()).split(" ")[0];
+        // No restaurant chosen
+        String finalDisplayedUndecidedUserText = displayedUsername + " " + mContext.getString(R.string.workmate_view_undecided);
+        // Restaurant chosen
+        String finalDisplayedDecidedUserText = displayedUsername + " " + mContext.getString(R.string.workmate_view_decided) + " " + user.getChosenRestaurantName();
+
+        if (user.getChosenRestaurantName().isEmpty()) {
+            holder.name.setText(finalDisplayedUndecidedUserText);
+            // Italic
+            holder.name.setTypeface(null, Typeface.ITALIC);
+        } else {
+            holder.name.setText(finalDisplayedDecidedUserText);
+            // Bold
+            holder.name.setTypeface(null, Typeface.BOLD);
+        }
 
         // Workmate picture
         if (user.getUrlPicture() != null) {
-            Glide.with(mContext)
-                    .load(user.getUrlPicture())
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(holder.picture);
+
+            if (user.getUrlPicture().isEmpty()) {
+
+                String noPictureUrl = "https://www.definitions-seo.com/images/definition-reecriture-url.png";
+                Glide.with(mContext)
+                        .load(noPictureUrl)
+                        .apply(RequestOptions.circleCropTransform()
+                                .placeholder(R.drawable.unknown_userpicture))
+                        .into(holder.picture);
+
+            }else{
+
+                Glide.with(mContext)
+                        .load(user.getUrlPicture())
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(holder.picture);
+            }
         }
-
-
-
     }
+
 
     @Override
     public int getItemCount() {

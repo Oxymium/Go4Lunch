@@ -4,33 +4,24 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.GsonBuilder;
-import com.raspberyl.go4lunch.API.GoogleApiInterface;
-import com.raspberyl.go4lunch.API.GoogleMapsClient;
 import com.raspberyl.go4lunch.R;
-import com.raspberyl.go4lunch.model.googleplaces.Example;
-import com.raspberyl.go4lunch.model.googleplaces.Photo;
+import com.raspberyl.go4lunch.controller.activities.MainActivity;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
-import com.raspberyl.go4lunch.utils.LatLongiDistanceConverter;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHolder> {
 
     // List of Restaurants
     private List<Result> mRestaurantList;
     private Context mContext;
+    private double longitude;
+    private double latitude;
 
     // Constructors
     public RestaurantsAdapter(List<Result> mRestaurantList, Context mContext) {
@@ -53,6 +44,9 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
 
         final Result result = mRestaurantList.get(position);
 
+        longitude = MainActivity.longitudeTest;
+        latitude = MainActivity.latitudeTest;
+
         //Bind here
 
         // Restaurant name
@@ -64,25 +58,24 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         holder.address.setText(displayedAddress);
 
         // Restaurant opening/closing times
-        /*
-        if (result.getOpeningHours().getOpenNow() == null) {
-            holder.openingTimes.setText("UNKNOWN"); } */
 
-            /*
-        }else {
+        try {
             boolean isOpenNow = result.getOpeningHours().getOpenNow();
             if (isOpenNow) {
-                holder.openingTimes.setText("is opened now");
+                holder.openingTimes.setText("Open Now");
             } else {
-                holder.openingTimes.setText("is closed now");
-            } */
+                holder.openingTimes.setText("Closed Now");
+            }
 
+        }catch(NullPointerException e) {
+            holder.openingTimes.setText("Error?");
+        }
 
         // Restaurant distance (m)
             // Set current lat/long location
         Location current_location = new Location("locationA");
-        current_location.setLatitude(49.49737);
-        current_location.setLongitude(0.107929);
+        current_location.setLatitude(latitude);
+        current_location.setLongitude(longitude);
              // Set targeted lat/long location
         Location restaurant_location = new Location("locationB");
         restaurant_location.setLatitude(result.getGeometry().getLocation().getLat());

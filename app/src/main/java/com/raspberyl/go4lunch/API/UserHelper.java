@@ -58,8 +58,6 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantUrlPicture", chosenRestaurantUrlPicture);
     }
 
-
-
     // --- DELETE ---
 
     public static Task<Void> deleteUser(String uid) {

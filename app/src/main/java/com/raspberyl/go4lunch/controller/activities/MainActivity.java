@@ -118,14 +118,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Minimum recommended by Android = 1min
     protected static long MIN_UPDATE_INTERVAL = 60 * 1000;
-    private int PROXIMITY_RADIUS = 10000;
+    private int PROXIMITY_RADIUS = 1000;
 
     LocationRequest locationRequest;
     Location lastLocation = null;
     Location currentLocation = null;
 
-    public double latitudeTest;
-    private double longitudeTest;
+    public static double latitudeTest;
+    public static double longitudeTest;
 
     public List<Result> listTest;
     private com.raspberyl.go4lunch.model.googledetails.Result mMyLunch;
@@ -136,8 +136,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         longitudeTest = 0.107929;
-        latitudeTest = 49.49437;
+        latitudeTest = 49.49437; */
 
         //1 - Configuring Toolbar
         this.configureToolBar();
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 WorkmatesFragment mWorkmatesFragment = new WorkmatesFragment();
                 mWorkmatesFragment.setArguments(testbundle);
                 FragmentManager mFragmentManager = getSupportFragmentManager();
-                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commit();
+                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commitAllowingStateLoss();
 
             }
 
@@ -374,19 +375,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initMapFragment() {
         MapFragment mMapFragment = new MapFragment();
         FragmentManager mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mMapFragment).commit();
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mMapFragment).commitAllowingStateLoss();
     }
 
     private void initRestaurantsFragment() {
         RestaurantsFragment mRestaurantFragment = new RestaurantsFragment();
         FragmentManager mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantFragment).commit();
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantFragment).commitAllowingStateLoss();
     }
 
     private void initWorkmatesFragment() {
         WorkmatesFragment mWorkmatesFragment = new WorkmatesFragment();
         FragmentManager mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commit();
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mWorkmatesFragment).commitAllowingStateLoss();
     }
 
     private void showAutoCompleteFragment() {
@@ -647,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 checkYourLunchDetails(userChosenRestaurantId);
             // Else, dsplay AlertDialog with no restaurant
             } else {
-                showYourLunchAlertDialog("no current", "lunch");
+                showYourLunchAlertDialog("No current", "Lunch");
             }
         }
 
@@ -719,7 +720,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void callRetrofit(double latitudeTest, double longitudeTest, int PROXIMITY_RADIUS) {
+    public void callRetrofit(final double latitudeTest, final double longitudeTest, int PROXIMITY_RADIUS) {
 
         GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
 
@@ -738,8 +739,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
                 mRestaurantsFragment.setArguments(bundle);
                 FragmentManager mFragmentManager = getSupportFragmentManager();
-                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commit();
-
+                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commitAllowingStateLoss();
 
 
                 try {

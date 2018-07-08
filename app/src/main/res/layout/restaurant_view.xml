@@ -29,6 +29,8 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/view_restaurant_name_text_size"
                 android:singleLine="true"
+                android:ellipsize="end"
+
                 />
 
             <TextView
