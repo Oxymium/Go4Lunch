@@ -87,12 +87,10 @@ public class RestaurantActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setAdapter(mWorkmatesAdapter);
-        // mWormatesAdapter.notifyDataSetChanged();
-
-
-
 
     }
+
+
 
     // ------------------
     // API
@@ -192,14 +190,14 @@ public class RestaurantActivity extends AppCompatActivity {
         mRestaurantCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse(restaurantPhoneNumber));
+
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", restaurantPhoneNumber, null));
 
                 if (ActivityCompat.checkSelfPermission(RestaurantActivity.this,
                         Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                startActivity(callIntent);
+                startActivity(intent);
             }
         });
 
@@ -287,7 +285,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
                     Log.w("U ON THAT RESTAURANT", new GsonBuilder().setPrettyPrinting().create().toJson(workmatesOnThatRestaurant));
                     mWorkmatesAdapter.notifyDataSetChanged();
-
+                    mWorkmatesAdapter.setFinalDisplayedDecidedUserText(222);
 
                 }
 

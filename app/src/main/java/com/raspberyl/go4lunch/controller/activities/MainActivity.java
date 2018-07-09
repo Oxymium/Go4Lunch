@@ -116,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected Location mLastLocation;
 
-    // Minimum recommended by Android = 1min
+    // Minimum recommended by Android = 6min
     protected static long MIN_UPDATE_INTERVAL = 60 * 1000;
-    private int PROXIMITY_RADIUS = 1000;
+    private int PROXIMITY_RADIUS = 800;
 
     LocationRequest locationRequest;
     Location lastLocation = null;
@@ -141,11 +141,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         latitudeTest = 49.49437; */
 
         //1 - Configuring Toolbar
-        this.configureToolBar();
-        this.configureDrawerLayout();
-        this.configureNavigationView();
-        this.configureBottomNavigationView();
-        this.updateDrawerWithPersonalData();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         checkForLocationRequest();
@@ -153,6 +148,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         callCurrentLocation();
 
         this.initMapFragment();
+
+        this.configureToolBar();
+        this.configureDrawerLayout();
+        this.configureNavigationView();
+        this.configureBottomNavigationView();
+        this.updateDrawerWithPersonalData();
+
+
+        /*
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        checkForLocationRequest();
+        checkForLocationSettings();
+        callCurrentLocation(); */
+
     }
 
     // ----------------
@@ -711,14 +720,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // -------------
     // Retrofit API
     // -------------
-
-    private void buildRetrofitAndGetResponse() {
-        // Test variables
-        double longitude = 0.107929;
-        double latitude = 49.49437;
-
-
-    }
 
     public void callRetrofit(final double latitudeTest, final double longitudeTest, int PROXIMITY_RADIUS) {
 

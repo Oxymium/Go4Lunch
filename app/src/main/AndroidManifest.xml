@@ -23,6 +23,7 @@
         <activity android:name=".controller.activities.MainActivity"/>
 
         <activity android:name=".controller.activities.RestaurantActivity" />
+        <activity android:name=".controller.activities.SettingsActivity" />
         <activity android:name=".controller.activities.WebViewActivity" />
 
         <!--
@@ -41,7 +42,7 @@
             android:label="@string/title_activity_maps" />
 
         <service
-            android:name=".controller.NotificationsService">
+            android:name=".controller.activities.NotificationsService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

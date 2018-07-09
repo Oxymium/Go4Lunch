@@ -23,6 +23,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     // List of Workmates
     private List<User> mWorkmatesList;
     private Context mContext;
+    private int restauID;
 
     // Constructors
     public WorkmatesAdapter(List<User> mWorkmatesList, Context mContext) {
@@ -53,16 +54,26 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
         String finalDisplayedUndecidedUserText = displayedUsername + " " + mContext.getString(R.string.workmate_view_undecided);
         // Restaurant chosen
         String finalDisplayedDecidedUserText = displayedUsername + " " + mContext.getString(R.string.workmate_view_decided) + " " + user.getChosenRestaurantName();
+        // RestaurantActivity view
+        String finalDisplayedRestaurantActivityView = displayedUsername + " " + mContext.getString(R.string.workmate_view_restaurantactivity);
 
-        if (user.getChosenRestaurantName().isEmpty()) {
-            holder.name.setText(finalDisplayedUndecidedUserText);
-            // Italic
-            holder.name.setTypeface(null, Typeface.ITALIC);
-        } else {
-            holder.name.setText(finalDisplayedDecidedUserText);
-            // Bold
-            holder.name.setTypeface(null, Typeface.BOLD);
+        if (restauID == 0) {
+
+            if (user.getChosenRestaurantName().isEmpty()) {
+                holder.name.setText(finalDisplayedUndecidedUserText);
+                // Italic
+                holder.name.setTypeface(null, Typeface.ITALIC);
+            } else {
+                holder.name.setText(finalDisplayedDecidedUserText);
+                // Bold
+                holder.name.setTypeface(null, Typeface.BOLD);
+            }
+
+        }else if(restauID == 222) {
+
+            holder.name.setText(finalDisplayedRestaurantActivityView);
         }
+
 
         // Workmate picture
         if (user.getUrlPicture() != null) {
@@ -91,6 +102,12 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> 
     public int getItemCount() {
         return mWorkmatesList.size();
 
+    }
+
+    // Allow change of text from another activity
+    public void setFinalDisplayedDecidedUserText(int restauID) {
+        this.restauID = restauID;
+        notifyDataSetChanged();
     }
 
     // Itemclick?

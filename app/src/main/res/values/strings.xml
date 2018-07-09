@@ -35,10 +35,13 @@
     <string name="authentication_error_authentication_canceled">Error: authentication canceled</string>
     <string name="authentication_connection_succeed">Connection succeed</string>
 
+    <!-- SettingsActivity Strings -->
+    <string name="settings_message">Enable/Disable notifications</string>
+
     <!-- WorkmateView Strings -->
     <string name="workmate_view_undecided">hasn\'t decided yet</string>
     <string name="workmate_view_decided">is eating at</string>
-
+    <string name="workmate_view_restaurantactivity">is joining!</string>
 
     <!-- RestaurantView Strings -->
     <string name="restaurant_view_name"><b>Name</b></string>

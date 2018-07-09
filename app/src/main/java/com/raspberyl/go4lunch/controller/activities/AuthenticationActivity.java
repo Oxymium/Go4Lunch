@@ -212,7 +212,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
                     if (currentUser == null) {
 
-                        String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : null;
+                        String urlPicture = (getCurrentUser().getPhotoUrl() != null) ? getCurrentUser().getPhotoUrl().toString() : "https://d30y9cdsu7xlg0.cloudfront.net/png/994628-200.png";
                         String username = getCurrentUser().getDisplayName();
                         String uid = getCurrentUser().getUid();
                         String userChosenRestaurantId = "";

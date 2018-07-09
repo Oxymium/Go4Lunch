@@ -42,10 +42,6 @@ public class UserHelper {
         return UserHelper.getUsersCollection().document(uid).update("username", username);
     }
 
-    public static Task<Void> updateIsMentor(String uid, Boolean isMentor) {
-        return UserHelper.getUsersCollection().document(uid).update("isMentor", isMentor);
-    }
-
     public static Task<Void> updateChosenRestaurantId(String chosenRestaurantId, String uid) {
         return UserHelper.getUsersCollection().document(uid).update("chosenRestaurantId", chosenRestaurantId);
     }

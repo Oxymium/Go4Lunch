@@ -56,7 +56,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     double latitude;
     double longitude;
-    private int PROXIMITY_RADIUS = 1000;
+    private int PROXIMITY_RADIUS = 500;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
@@ -141,15 +141,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     // INTERFACE ///////////////////////////////////////////////////////////////////////////////////
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        /*
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocatioApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this); */
+        Log.d("onLocationChanged", "entered");
+
+        latitude = MainActivity.latitudeTest;
+        longitude = MainActivity.longitudeTest;
+
+        LatLng latLng = new LatLng(latitude, longitude);
+
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+
+
+        build_retrofit_and_get_response(longitude, latitude);
 
     }
 
@@ -193,7 +196,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
         Log.d("onLocationChanged", String.format("latitude:%.3f longitude:%.3f", latitude, longitude));
 
@@ -255,7 +258,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         Marker m = mGoogleMap.addMarker(markerOptions);
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
                         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Go4Lunch</string>
+    <string name="authentication_subtitle">Trouvez un restaurant sympa et invitez vos collègues pour le déjeuner!</string>
+
+    <!-- Toolbar Strings -->
+    <string name="toolbar_search_title">Recherche</string>
+    <string name="toolbar_map_title">J\'ai faim!</string>
+    <string name="toolbar_workmates_title">Collègues disponibles</string>
+
+    <!-- NavigationDrawer Strings -->
+    <string name="header_username"><B>Nom d'utilisateur</B></string>
+    <string name="header_usermail">Usermail</string>
+    <string name="drawer_your_lunch">VOTRE DEJEUNER</string>
+    <string name="drawer_settings">OPTIONS</string>
+    <string name="drawer_logout">SE DECONNECTER</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- BottomNavigation Strings -->
+    <string name="bottom_map_view">Vue Map</string>
+    <string name="bottom_list_view">Vue Liste</string>
+    <string name="bottom_workmates">Collègues</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- Authentication Strings -->
+    <string name="authentication_button_mail">Connexion Email</string>
+    <string name="authentication_button_facebook">Connexion Facebook</string>
+    <string name="authentication_button_google">Connexion Google</string>
+    <string name="authentication_button_twitter">Connexion Twitter</string>
+
+    <string name="authentication_error_no_internet">Erreur: pas d\'internet</string>
+    <string name="authentication_error_unknown_error">Erreur inconnue</string>
+    <string name="authentication_error_authentication_canceled">Erreur: authentification annulée</string>
+    <string name="authentication_connection_succeed">Connexion réussie</string>
+
+    <!-- SettingsActivity Strings -->
+    <string name="settings_message">Activer/Désactiver les notifications</string>
+
+    <!-- WorkmateView Strings -->
+    <string name="workmate_view_undecided">n\'a pas encore décidé</string>
+    <string name="workmate_view_decided">déjeune à</string>
+    <string name="workmate_view_restaurantactivity">y sera présent!</string>
+
+    <!-- RestaurantView Strings -->
+    <string name="restaurant_view_name"><b>Nom</b></string>
+    <string name="restaurant_view_address">Adresse</string>
+    <string name="restaurant_view_distance">Distance</string>
+    <string name="restaurant_view_opening_times">ouvert/fermé</string>
+    <string name="restaurant_view_stars">étoiles</string>
+    <string name="restaurant_view_workmates">collègues</string>
+
+
+    <!-- Marker Strings -->
+    <string name="marker_me">Moi</string>
+
+    <!-- RestaurantActivity Strings -->
+    <string name="restaurant_activity_button_call_text"><b>TEL</b></string>
+    <string name="restaurant_activity_button_like_text"><b>LIKE</b></string>
+    <string name="restaurant_activity_button_website_text"><b>SITEWEB</b></string>
+
+    <string name="restaurant_activity_restaurant_name">Restaurant</string>
+    <string name="restaurant_activity_restaurant_address">Adresse</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_title">Votre repas!</string>
+    <string name="default_notification_channel_id">Test</string>
+
+
+    <!-- Alertdialog Strings -->
+    <string name="alertdialog_error">Erreur</string>
+    <string name="alertdialog_your_lunch">Votre déjeuner actuel!</string>
+    <string name="alertdialog_content_no_website_error">Désolé, il semble que ce restaurant n\'a pas encore de site web! :(</string>
+    <string name="alertdialog_button_neutral">OK</string>
+
+
+    <!-- FACEBOOK PURPOSE -->
+    <string name="facebook_application_id" translatable="false">227616504691090</string>
+    <string name="facebook_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb227616504691090</string>
+
+    <!-- TWITTER PURPOSE -->
+    <string name="twitter_consumer_key" translatable="false">fkhXvA39uBfOl1UAk3lx1xO0p</string>
+    <string name="twitter_consumer_secret" translatable="false">Iwu5b38KJJVCthxOOd2LdURTVMK0ItFYZBFWfAPtHJhnzzv3x5</string>
+</resources>

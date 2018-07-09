@@ -4,16 +4,27 @@ import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.activities.MainActivity;
+import com.raspberyl.go4lunch.model.firebase.User;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHolder> {
 
@@ -22,6 +33,10 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
     private Context mContext;
     private double longitude;
     private double latitude;
+
+    private int numberOfUsers;
+
+    private List<User> mUserList;
 
     // Constructors
     public RestaurantsAdapter(List<Result> mRestaurantList, Context mContext) {
@@ -89,6 +104,11 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
              // Bind to holder
         holder.distance.setText(displayedDistance);
 
+        // Restaurant workmates
+
+        holder.workmateNumber.setText("Nb" + 0);
+
+
         // Restaurant picture
         if (result.getPhotos().get(0).getPhotoReference() != null) {
             String restaurantPictureUrl = "https://maps.googleapis.com/maps/api/place/photo" +
@@ -114,6 +134,40 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         return this.mRestaurantList.get(position);
     }
 
+    /*
+    private void getAllUsersOnCurrentRestaurant(Result result) {
+
+        mUserList = new ArrayList<>();
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", result.getPlaceId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                if (e != null) {
+                    // error
+                }
+
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    User user = doc.toObject(User.class);
+                    mUserList.add(user);
+                }
+
+                    numberOfUsers = mUserList.size();
+                    setNumberOfUsers(numberOfUsers);
+                    System.out.print("XYZLOP" + numberOfUsers);
+
+            }
+
+
+        });
+
+    }
+
+    public void setNumberOfUsers(int numberOfUsers) {
+        this.numberOfUsers = numberOfUsers;
+        notifyDataSetChanged();
+    }
+    */
 
 }
 
