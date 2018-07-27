@@ -19,10 +19,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -35,6 +38,7 @@ import com.raspberyl.go4lunch.API.RestaurantHelper;
 import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.recyclerview.WorkmatesAdapter;
+import com.raspberyl.go4lunch.model.firebase.Restaurant;
 import com.raspberyl.go4lunch.model.firebase.User;
 import com.raspberyl.go4lunch.model.googledetails.Details;
 import com.raspberyl.go4lunch.model.googledetails.Result;
@@ -234,8 +238,29 @@ public class RestaurantActivity extends AppCompatActivity {
         mRestaurantLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Add like
-                RestaurantHelper.createRestaurant(chosenRestaurantId, 1);
+
+                // Fetch Database to check if current Restaurant exists in it
+                RestaurantHelper.getRestaurant(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+
+                        // If current restaurant is null, create document
+                        if (restaurant == null) {
+
+                            RestaurantHelper.createRestaurant(chosenRestaurantId, 1);
+
+                        // Else, fetch previous value and increment by 1
+                        }else{
+
+                            int numberOfLikes = restaurant.getNumberOfLikes();
+                            RestaurantHelper.updateNumberOfLikes(chosenRestaurantId, numberOfLikes + 1);
+
+                        }
+
+                    }
+                });
 
             }
         });

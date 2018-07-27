@@ -105,9 +105,12 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         holder.distance.setText(displayedDistance);
 
         // Restaurant workmates
+        String numberOfWorkmates = String.valueOf(result.getNumberOfPeopleJoining());
+        holder.workmateNumber.setText(numberOfWorkmates);
 
-        holder.workmateNumber.setText("Nb" + 0);
-
+        // Restaurant likes
+        String numberOfLikes = String.valueOf(result.getNumberOfLikes());
+        holder.stars.setText(numberOfLikes);
 
         // Restaurant picture
         if (result.getPhotos().get(0).getPhotoReference() != null) {

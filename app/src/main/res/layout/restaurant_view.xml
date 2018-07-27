@@ -75,7 +75,7 @@
                 android:paddingBottom="@dimen/view_restaurant_padding_bottom"
                 android:text="@string/restaurant_view_workmates" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/restaurant_view_stars"
                 android:text="@string/restaurant_view_stars"
                 android:layout_width="wrap_content"

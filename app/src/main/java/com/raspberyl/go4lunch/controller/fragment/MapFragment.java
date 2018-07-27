@@ -2,6 +2,7 @@ package com.raspberyl.go4lunch.controller.fragment;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.activities.MainActivity;
+import com.raspberyl.go4lunch.controller.activities.RestaurantActivity;
 import com.raspberyl.go4lunch.model.googleplaces.Example;
 import com.raspberyl.go4lunch.model.googleplaces.Result;
 
@@ -48,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * A simple {@link Fragment} subclass.
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mGoogleMap;
     private MapView mMapView;
@@ -61,6 +63,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
+
+    List<Result> restaurantsList;
 
     public MapFragment() {
         // Required empty public constructor
@@ -97,6 +101,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onMapReady(GoogleMap googleMap) {
 
         mGoogleMap = googleMap;
+        mGoogleMap.setOnMarkerClickListener(this);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         longitude = MainActivity.longitudeTest;
@@ -231,7 +236,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
 
-                List<Result> test = response.body().getResults();
+                restaurantsList = response.body().getResults();
                 // Log.w("Full「Top Stories」json", new GsonBuilder().setPrettyPrinting().create().toJson(response));
 
                 try {
@@ -260,16 +265,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
-                        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        /*mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override
                             public boolean onMarkerClick(Marker marker) {
-                                 final String placeId = marker.getId();
+                                 final String markerId = marker.getId();
 
-                                Toast.makeText(getContext(), placeName, Toast.LENGTH_LONG).show();
+                                 Toast.makeText(getContext(), placeName, Toast.LENGTH_LONG).show();
 
                                 return false;
                             }
-                        });
+                        }); */
                     }
 
                 } catch (Exception e) {
@@ -287,24 +292,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
-    // BUTTON TEST
-    private void placeButtonBottom() {
-
-        if (mMapView != null &&
-                mMapView.findViewById(Integer.parseInt("1")) != null) {
-            // Get the button view
-            View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-            // and next place it, on bottom right (as Google Maps app)
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
-                    locationButton.getLayoutParams();
-            // position on right bottom
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-            layoutParams.setMargins(0, 0, 30, 30);
-        }
-
-    }
-
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
@@ -313,6 +300,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .build();
         mGoogleApiClient.connect();
     }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+        String result = marker.getSnippet();
+        String placeId = restaurantsList.get(0).getPlaceId();
+        Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+        //Intent startRestaurantActivity = new Intent(getContext(), RestaurantActivity.class);
+        return false;
+    }
+
 }
 
 

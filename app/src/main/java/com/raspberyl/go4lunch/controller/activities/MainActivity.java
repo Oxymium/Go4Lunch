@@ -66,11 +66,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.raspberyl.go4lunch.API.GoogleApiInterface;
 import com.raspberyl.go4lunch.API.GoogleMapsClient;
+import com.raspberyl.go4lunch.API.RestaurantHelper;
 import com.raspberyl.go4lunch.API.UserHelper;
 import com.raspberyl.go4lunch.R;
 import com.raspberyl.go4lunch.controller.fragment.MapFragment;
 import com.raspberyl.go4lunch.controller.fragment.RestaurantsFragment;
 import com.raspberyl.go4lunch.controller.fragment.WorkmatesFragment;
+import com.raspberyl.go4lunch.model.firebase.Restaurant;
 import com.raspberyl.go4lunch.model.firebase.User;
 import com.raspberyl.go4lunch.model.googledetails.Details;
 import com.raspberyl.go4lunch.model.googleplaces.Example;
@@ -731,19 +733,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
 
-                List<Result> listTest = response.body().getResults();
-                // Log.w("Nearby Restaurants", new GsonBuilder().setPrettyPrinting().create().toJson(listTest));
-
-                Bundle bundle = new Bundle();
-                bundle.putString("valuesArray", new Gson().toJson(listTest));
-
-                RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
-                mRestaurantsFragment.setArguments(bundle);
-                FragmentManager mFragmentManager = getSupportFragmentManager();
-                mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commitAllowingStateLoss();
-
-
                 try {
+
+                    List<Result> listTest = response.body().getResults();
+                    Log.w("Nearby Restaurants LIST", new GsonBuilder().setPrettyPrinting().create().toJson(listTest));
+
+                    for (int i = 0; i < listTest.size(); i++) {
+                        Result result = listTest.get(i);
+                        setLikesToList(result);
+                    }
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("valuesArray", new Gson().toJson(listTest));
+
+                    RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
+                    mRestaurantsFragment.setArguments(bundle);
+                    FragmentManager mFragmentManager = getSupportFragmentManager();
+                    mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commitAllowingStateLoss();
 
 
                 } catch (Exception e) {
@@ -761,6 +767,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    public void setLikesToList(final Result result) {
 
+        final String chosenRestaurantId = result.getPlaceId();
+
+            RestaurantHelper.getNumberOfLikes(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+                    // Retrofit Call + Restaurant ID if it exists
+                    if (restaurant != null){
+
+                        result.setNumberOfLikes(restaurant.getNumberOfLikes());
+
+                    }
+                }
+
+            });
+        }
 
 }
+
+
+
+
+

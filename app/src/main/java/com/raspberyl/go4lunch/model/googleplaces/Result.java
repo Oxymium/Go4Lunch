@@ -30,9 +30,6 @@ public class Result {
     @SerializedName("place_id")
     @Expose
     private String placeId;
-    @SerializedName("rating")
-    @Expose
-    private Double rating;
     @SerializedName("reference")
     @Expose
     private String reference;
@@ -45,12 +42,12 @@ public class Result {
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
-    @SerializedName("price_level")
-    @Expose
-    private Integer priceLevel;
+
+    private int numberOfLikes;
+    private int numberOfPeopleJoining;
 
     // Constructor
-    public Result(Geometry geometry, String icon, String id, String name, OpeningHours openingHours, List<Photo> photos, String placeId, Double rating, String reference, String scope, List<String> types, String vicinity, Integer priceLevel) {
+    public Result(Geometry geometry, String icon, String id, String name, OpeningHours openingHours, List<Photo> photos, String placeId, String reference, String scope, List<String> types, String vicinity, int numberOfLikes, int numberOfPeopleJoining) {
         this.geometry = geometry;
         this.icon = icon;
         this.id = id;
@@ -58,12 +55,12 @@ public class Result {
         this.openingHours = openingHours;
         this.photos = photos;
         this.placeId = placeId;
-        this.rating = rating;
         this.reference = reference;
         this.scope = scope;
         this.types = types;
         this.vicinity = vicinity;
-        this.priceLevel = priceLevel;
+        this.numberOfLikes = numberOfLikes;
+        this.numberOfPeopleJoining = numberOfPeopleJoining;
     }
 
     // Getters & Setters
@@ -196,24 +193,6 @@ public class Result {
     /**
      *
      * @return
-     * The rating
-     */
-    public Double getRating() {
-        return rating;
-    }
-
-    /**
-     *
-     * @param rating
-     * The rating
-     */
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    /**
-     *
-     * @return
      * The reference
      */
     public String getReference() {
@@ -283,24 +262,26 @@ public class Result {
         this.vicinity = vicinity;
     }
 
-    /**
-     *
-     * @return
-     * The priceLevel
-     */
-    public Integer getPriceLevel() {
-        return priceLevel;
+    // Custom get & set
+
+    public int getNumberOfLikes() {
+        return numberOfLikes;
     }
 
-    /**
-     *
-     * @param priceLevel
-     * The price_level
-     */
-
-    public void setPriceLevel(Integer priceLevel) {
-        this.priceLevel = priceLevel;
+    public void setNumberOfLikes(int numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
     }
+
+    public int getNumberOfPeopleJoining() {
+        return numberOfPeopleJoining;
+    }
+
+    public void setNumberOfPeopleJoining(int numberOfPeopleJoining) {
+        this.numberOfPeopleJoining = numberOfPeopleJoining;
+    }
+
+
+
 
 }
 

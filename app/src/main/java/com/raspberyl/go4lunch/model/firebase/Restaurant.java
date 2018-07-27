@@ -5,6 +5,8 @@ public class Restaurant {
     private String restaurantName;
     int numberOfLikes;
 
+    public Restaurant() {}
+
     // Constructor
     public Restaurant(String restaurantName, int numberOfLikes) {
         this.restaurantName = restaurantName;

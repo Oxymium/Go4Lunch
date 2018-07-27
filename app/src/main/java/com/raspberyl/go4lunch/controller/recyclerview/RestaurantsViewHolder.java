@@ -11,7 +11,7 @@ import com.raspberyl.go4lunch.R;
 public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
 
     // Variables
-    public TextView name, address, distance, workmateNumber, openingTimes;
+    public TextView name, address, distance, workmateNumber, stars, openingTimes;
     public ImageView picture;
 
     // Constructor
@@ -22,6 +22,7 @@ public class RestaurantsViewHolder extends RecyclerView.ViewHolder {
         address = view.findViewById(R.id.restaurant_view_address);
         distance = view.findViewById(R.id.restaurant_view_distance);
         workmateNumber = view.findViewById(R.id.restaurant_view_workmates);
+        stars = view.findViewById(R.id.restaurant_view_stars);
         openingTimes = view.findViewById(R.id.restaurant_view_opening_times);
 
         picture = view.findViewById(R.id.restaurant_view_picture);
