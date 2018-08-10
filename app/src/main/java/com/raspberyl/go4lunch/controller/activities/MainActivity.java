@@ -141,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int listSize;
     int increment = 1;
 
+    int secondListSize;
+    int secondIncrement = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -771,7 +774,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         @Override
                         public void onComplete() {
-
+                            //startMapFragmentWithBundle(restaurantResults);
                             doThirdCall(restaurantResults);
 
                         }
@@ -794,56 +797,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void doThirdCall(final List<Result> results) {
 
-        Observable<DocumentSnapshot> observable = Observable.create(new ObservableOnSubscribe<DocumentSnapshot>() {
+        Observable<DocumentSnapshot> observable2 = Observable.create(new ObservableOnSubscribe<DocumentSnapshot>() {
             @Override
             public void subscribe(ObservableEmitter<DocumentSnapshot> e) throws Exception {
-
-                FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                final List<User> usersList = new ArrayList<>();
-
                 for (Result result : results) {
-
-                    CallbackFirestore2 callbackFirestore2 = new CallbackFirestore2(e, result);
-                    firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", result.getPlaceId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-
-                            if (e != null) {
-                                // error
-                            }
-
-                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                                User user = doc.toObject(User.class);
-                                usersList.add(user);
-                            }
-
-
-                        }
-
-
-                    });
-
-                    result.setNumberOfPeopleJoining(usersList.size());
-
-
+                    /* callback object now knows which is the last request so it can emit the onComplete */
+                    CallbackFirestore2 callbackInstance2 = new CallbackFirestore2(e, result);
+//                                i++;
+                    RestaurantHelper.getNumberOfPeopleJoining(result.getPlaceId()).addOnSuccessListener(callbackInstance2);
                 }
             }
+
+
         });
-        observable.subscribe(new Observer<DocumentSnapshot>() {
+        observable2.subscribe(new Observer<DocumentSnapshot>() {
             @Override
             public void onSubscribe(Disposable d) {
+
+                Log.d("doThirdCall::OnSub", "Third call error");
+
 
             }
 
             @Override
             public void onNext(DocumentSnapshot documentSnapshot) {
 
+                Log.d("doThirdCall::OnNext", "Third call error");
+
+
             }
 
             @Override
             public void onError(Throwable e) {
 
-                Log.d("onError third", "Third call error");
+                Log.d("doThirdCall::onError", "Third call error");
+
 
 
             }
@@ -851,7 +839,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onComplete() {
 
-                startMapFragmentWithBundle(restaurantResults);
+                Log.d("doThirdCall::onComplete", "Third call error");
+                startMapFragmentWithBundle(results);
 
             }
         });
@@ -887,7 +876,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         private final ObservableEmitter<DocumentSnapshot> emitter;
         //        private final boolean last;
         private Result result;
-        private User user;
 
         public CallbackFirestore2(ObservableEmitter<DocumentSnapshot> e, Result result) {
             this.emitter = e;
@@ -896,17 +884,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public void onSuccess(DocumentSnapshot value) {
-            Log.e("Success2", value.toString());
+            Log.e("Success", value.toString());
             Restaurant restaurant = value.toObject(Restaurant.class);
-            User user = value.toObject(User.class);
-            if (user.getChosenRestaurantId() == restaurant.getRestaurantName()){
-                result.setNumberOfPeopleJoining(1);
+            if (restaurant != null){
+                result.setNumberOfPeopleJoining(restaurant.getNumberOfPeopleJoining());
             }
-            if (increment == listSize) {
+            if (secondIncrement == secondListSize) {
                 Log.e("Complete", "Complete");
                 emitter.onComplete();
             }
-            increment++;
+            secondIncrement++;
         }
     }
 

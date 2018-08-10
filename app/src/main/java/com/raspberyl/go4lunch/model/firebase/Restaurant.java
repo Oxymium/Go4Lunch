@@ -4,13 +4,15 @@ public class Restaurant {
 
     private String restaurantName;
     int numberOfLikes;
+    int numberOfPeopleJoining;
 
     public Restaurant() {}
 
     // Constructor
-    public Restaurant(String restaurantName, int numberOfLikes) {
+    public Restaurant(String restaurantName, int numberOfLikes, int numberOfPeopleJoining) {
         this.restaurantName = restaurantName;
-        this.numberOfLikes = numberOfLikes; }
+        this.numberOfLikes = numberOfLikes;
+        this.numberOfPeopleJoining = numberOfPeopleJoining; }
 
 
     // Getters
@@ -22,6 +24,9 @@ public class Restaurant {
         return numberOfLikes;
     }
 
+    public int getNumberOfPeopleJoining() {
+        return numberOfPeopleJoining;
+    }
 
 
     // Setters
@@ -34,6 +39,10 @@ public class Restaurant {
     }
 
     public void setId(String id) {
+    }
+
+    public void setNumberOfPeopleJoining(int numberOfPeopleJoining) {
+        this.numberOfPeopleJoining = numberOfPeopleJoining;
     }
 
 }

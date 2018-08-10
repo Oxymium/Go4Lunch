@@ -59,8 +59,8 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
 
         final Result result = mRestaurantList.get(position);
 
-        longitude = MainActivity.longitudeTest;
-        latitude = MainActivity.latitudeTest;
+        longitude = MainActivity.longitude;
+        latitude = MainActivity.latitude;
 
         //Bind here
 

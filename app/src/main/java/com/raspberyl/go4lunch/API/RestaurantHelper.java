@@ -19,9 +19,9 @@ public class RestaurantHelper {
 
     // --- CREATE ---
 
-    public static Task<Void> createRestaurant(String restaurantName, int numberOfLikes) {
+    public static Task<Void> createRestaurant(String restaurantName, int numberOfLikes, int numberOfPeopleJoining) {
         // 1 - Create Obj
-        Restaurant restaurantToCreate = new Restaurant(restaurantName, numberOfLikes);
+        Restaurant restaurantToCreate = new Restaurant(restaurantName, numberOfLikes, numberOfPeopleJoining);
 
         return RestaurantHelper.getRestaurantsCollection().document(restaurantName).set(restaurantToCreate);
     }
@@ -36,6 +36,10 @@ public class RestaurantHelper {
         return RestaurantHelper.getRestaurantsCollection().document(restauId).get();
     }
 
+    public static Task<DocumentSnapshot> getNumberOfPeopleJoining(String restauId){
+        return RestaurantHelper.getRestaurantsCollection().document(restauId).get();
+    }
+
 
     // --- UPDATE ---
 
@@ -45,6 +49,10 @@ public class RestaurantHelper {
 
     public static Task<Void> updateNumberOfLikes(String restauId, int numberOfLikes) {
         return RestaurantHelper.getRestaurantsCollection().document(restauId).update("numberOfLikes", numberOfLikes);
+    }
+
+    public static Task<Void> updateNumberOfPeopleJoining(String restauId, int numberOfPeopleJoining) {
+        return RestaurantHelper.getRestaurantsCollection().document(restauId).update("numberOfPeopleJoining", numberOfPeopleJoining);
     }
 
 }

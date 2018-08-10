@@ -14,6 +14,7 @@ public class User {
     private String chosenRestaurantName;
     private String chosenRestaurantUrlPicture;
 
+
     public User() {}
 
     // Contructor
@@ -48,6 +49,7 @@ public class User {
     public String getChosenRestaurantUrlPicture() {
         return chosenRestaurantUrlPicture;
     }
+
 
 
     // Setters

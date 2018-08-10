@@ -249,7 +249,7 @@ public class RestaurantActivity extends AppCompatActivity {
                         // If current restaurant is null, create document
                         if (restaurant == null) {
 
-                            RestaurantHelper.createRestaurant(chosenRestaurantId, 1);
+                            RestaurantHelper.createRestaurant(chosenRestaurantId, 1, 0);
 
                         // Else, fetch previous value and increment by 1
                         }else{
@@ -281,6 +281,28 @@ public class RestaurantActivity extends AppCompatActivity {
                 UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
                 UserHelper.updateChosenRestaurantName(chosenRestaurantName, FirebaseAuth.getInstance().getCurrentUser().getUid());
                 UserHelper.updateChosenRestaurantUrlPicture(mPhotoId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                RestaurantHelper.getRestaurant(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+
+                        // If current restaurant is null, create document
+                        if (restaurant == null) {
+
+                            RestaurantHelper.createRestaurant(chosenRestaurantId, 0, 1);
+
+                            // Else, fetch previous value and increment by 1
+                        }else{
+
+                            int numberOfPeopleJoining = restaurant.getNumberOfPeopleJoining();
+                            RestaurantHelper.updateNumberOfPeopleJoining(chosenRestaurantId, numberOfPeopleJoining + 1);
+
+                        }
+
+                    }
+                });
             }
 
         });
