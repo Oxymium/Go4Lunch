@@ -61,6 +61,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -84,6 +85,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -126,12 +132,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Location lastLocation = null;
     Location currentLocation = null;
 
-    public static double latitudeTest;
-    public static double longitudeTest;
+    public static double latitude;
+    public static double longitude;
 
-    public List<Result> listTest;
+    private List<Result> restaurantResults;
     private com.raspberyl.go4lunch.model.googledetails.Result mMyLunch;
 
+    int listSize;
+    int increment = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,13 +164,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureNavigationView();
         this.configureBottomNavigationView();
         this.updateDrawerWithPersonalData();
-
-
-        /*
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        checkForLocationRequest();
-        checkForLocationSettings();
-        callCurrentLocation(); */
 
     }
 
@@ -241,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             // Bottom Toolbar: ListView
             case R.id.bottom_list_view:
-                callRetrofit(latitudeTest, longitudeTest, PROXIMITY_RADIUS);
+                callRetrofit(latitude, longitude, PROXIMITY_RADIUS);
                 Toast.makeText(this, "list VIEW", Toast.LENGTH_LONG).show();
                 mToolbar.setTitle(R.string.toolbar_map_title);
                 break;
@@ -488,9 +489,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             "Current location Longitude is " + currentLocation.getLongitude();
 
                     //////////////////// resultTextView.setText(result);
-                    latitudeTest = currentLocation.getLatitude();
-                    longitudeTest = currentLocation.getLongitude();
-                    System.out.println("LONG & LATITUDE" + "" + latitudeTest + "" + longitudeTest);
+                    latitude = currentLocation.getLatitude();
+                    longitude = currentLocation.getLongitude();
+                    System.out.println("LONG & LATITUDE" + "" + latitude + "" + longitude);
                 }
             }, Looper.myLooper());
 
@@ -515,9 +516,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     "Last known longitude Longitude is " + mLastLocation.getLongitude();
 
                             /////////////////// resultTextView.setText(result);
-                            latitudeTest = currentLocation.getLatitude();
-                            longitudeTest = currentLocation.getLongitude();
-                            System.out.println("LONG & LATITUDE" + "" + latitudeTest + "" + longitudeTest);
+                            latitude = currentLocation.getLatitude();
+                            longitude = currentLocation.getLongitude();
+                            System.out.println("LONG & LATITUDE" + "" + latitude + "" + longitude);
                         } else {
                             showSnackbar("No Last known location found. Try current location..!");
                         }
@@ -723,11 +724,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Retrofit API
     // -------------
 
-    public void callRetrofit(final double latitudeTest, final double longitudeTest, int PROXIMITY_RADIUS) {
+
+    public void callRetrofit(final double latitude, final double longitude, int PROXIMITY_RADIUS) {
 
         GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
 
-        Call<Example> call = service.getNearbyRestaurants("restaurant", latitudeTest + "," + longitudeTest, PROXIMITY_RADIUS);
+        Call<Example> call = service.getNearbyRestaurants("restaurant", latitude + "," + longitude, PROXIMITY_RADIUS);
 
         call.enqueue(new Callback<Example>() {
             @Override
@@ -735,22 +737,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 try {
 
-                    List<Result> listTest = response.body().getResults();
-                    Log.w("Nearby Restaurants LIST", new GsonBuilder().setPrettyPrinting().create().toJson(listTest));
+                    restaurantResults = response.body().getResults();
+                    Log.w("Nearby Restaurants LIST", new GsonBuilder().setPrettyPrinting().create().toJson(restaurantResults));
+                    increment = 1;
+                    listSize = restaurantResults.size();
 
-                    for (int i = 0; i < listTest.size(); i++) {
-                        Result result = listTest.get(i);
-                        setLikesToList(result);
-                    }
+                    Observable<DocumentSnapshot> observable = Observable.create(new ObservableOnSubscribe<DocumentSnapshot>() {
+                        @Override
+                        public void subscribe(ObservableEmitter<DocumentSnapshot> e) throws Exception {
+                            for (Result result : restaurantResults) {
+                                /* callback object now knows which is the last request so it can emit the onComplete */
+                                CallbackFirestore callbackInstance = new CallbackFirestore(e, result);
+//                                i++;
+                                RestaurantHelper.getNumberOfLikes(result.getPlaceId()).addOnSuccessListener(callbackInstance);
+                            }
+                        }
+                    });
+                    observable.subscribe(new Observer<DocumentSnapshot>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("valuesArray", new Gson().toJson(listTest));
+                        }
 
-                    RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
-                    mRestaurantsFragment.setArguments(bundle);
-                    FragmentManager mFragmentManager = getSupportFragmentManager();
-                    mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commitAllowingStateLoss();
+                        @Override
+                        public void onNext(DocumentSnapshot documentSnapshot) {
 
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                            doThirdCall(restaurantResults);
+
+                        }
+                    });
 
                 } catch (Exception e) {
                     Log.d("onResponse", "There is an error");
@@ -767,27 +792,141 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void setLikesToList(final Result result) {
+    private void doThirdCall(final List<Result> results) {
 
-        final String chosenRestaurantId = result.getPlaceId();
+        Observable<DocumentSnapshot> observable = Observable.create(new ObservableOnSubscribe<DocumentSnapshot>() {
+            @Override
+            public void subscribe(ObservableEmitter<DocumentSnapshot> e) throws Exception {
 
-            RestaurantHelper.getNumberOfLikes(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+                final List<User> usersList = new ArrayList<>();
 
-                    Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
-                    // Retrofit Call + Restaurant ID if it exists
-                    if (restaurant != null){
+                for (Result result : results) {
 
-                        result.setNumberOfLikes(restaurant.getNumberOfLikes());
+                    CallbackFirestore2 callbackFirestore2 = new CallbackFirestore2(e, result);
+                    firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", result.getPlaceId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                    }
+                            if (e != null) {
+                                // error
+                            }
+
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                User user = doc.toObject(User.class);
+                                usersList.add(user);
+                            }
+
+
+                        }
+
+
+                    });
+
+                    result.setNumberOfPeopleJoining(usersList.size());
+
+
                 }
+            }
+        });
+        observable.subscribe(new Observer<DocumentSnapshot>() {
+            @Override
+            public void onSubscribe(Disposable d) {
 
-            });
+            }
+
+            @Override
+            public void onNext(DocumentSnapshot documentSnapshot) {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                Log.d("onError third", "Third call error");
+
+
+            }
+
+            @Override
+            public void onComplete() {
+
+                startMapFragmentWithBundle(restaurantResults);
+
+            }
+        });
+
+    }
+
+    public class CallbackFirestore implements OnSuccessListener<DocumentSnapshot> {
+        private final ObservableEmitter<DocumentSnapshot> emitter;
+        //        private final boolean last;
+        private Result result;
+
+        public CallbackFirestore(ObservableEmitter<DocumentSnapshot> e, Result result) {
+            this.emitter = e;
+            this.result = result;
         }
 
+        @Override
+        public void onSuccess(DocumentSnapshot value) {
+            Log.e("Success", value.toString());
+            Restaurant restaurant = value.toObject(Restaurant.class);
+            if (restaurant != null){
+                result.setNumberOfLikes(restaurant.getNumberOfLikes());
+            }
+            if (increment == listSize) {
+                Log.e("Complete", "Complete");
+                emitter.onComplete();
+            }
+            increment++;
+        }
+    }
+
+    public class CallbackFirestore2 implements OnSuccessListener<DocumentSnapshot> {
+        private final ObservableEmitter<DocumentSnapshot> emitter;
+        //        private final boolean last;
+        private Result result;
+        private User user;
+
+        public CallbackFirestore2(ObservableEmitter<DocumentSnapshot> e, Result result) {
+            this.emitter = e;
+            this.result = result;
+        }
+
+        @Override
+        public void onSuccess(DocumentSnapshot value) {
+            Log.e("Success2", value.toString());
+            Restaurant restaurant = value.toObject(Restaurant.class);
+            User user = value.toObject(User.class);
+            if (user.getChosenRestaurantId() == restaurant.getRestaurantName()){
+                result.setNumberOfPeopleJoining(1);
+            }
+            if (increment == listSize) {
+                Log.e("Complete", "Complete");
+                emitter.onComplete();
+            }
+            increment++;
+        }
+    }
+
+
+    private void startMapFragmentWithBundle(final List<Result> results) {
+
+        System.out.println("callRetrofit::OnComplete");
+
+        Bundle bundle = new Bundle();
+        bundle.putString("valuesArray", new Gson().toJson(results));
+        Log.w("calRetrofit::onComplete", new GsonBuilder().setPrettyPrinting().create().toJson(results));
+
+        RestaurantsFragment mRestaurantsFragment = new RestaurantsFragment();
+        mRestaurantsFragment.setArguments(bundle);
+        FragmentManager mFragmentManager = getSupportFragmentManager();
+        mFragmentManager.beginTransaction().replace(R.id.activity_main_frame_layout, mRestaurantsFragment).commitAllowingStateLoss();
+    }
+
 }
+
 
 
 
