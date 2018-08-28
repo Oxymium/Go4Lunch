@@ -93,6 +93,8 @@ import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
 
@@ -140,9 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     int listSize;
     int increment = 1;
-
-    int secondListSize;
-    int secondIncrement = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         // Menu item actions
         switch (item.getItemId()) {
-            // Start SearchActivity from the「Search」item
+            // Start SearchActivity from theã€ŒSearchã€item
             case R.id.menu_activity_main_search:
                 Toast.makeText(this, "SEARCH CLICK", Toast.LENGTH_LONG).show();
                 showAutoCompleteFragment();
@@ -651,23 +650,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Fetch User chosenRestaurantId
     private void getChosenRestaurantId() {
 
-     UserHelper.getChosenRestaurantId(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-        @Override
-        public void onSuccess(DocumentSnapshot documentSnapshot) {
+        UserHelper.getChosenRestaurantId(this.getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-            User currentUser = documentSnapshot.toObject(User.class);
-            String userChosenRestaurantId = currentUser.getChosenRestaurantId();
+                User currentUser = documentSnapshot.toObject(User.class);
+                String userChosenRestaurantId = currentUser.getChosenRestaurantId();
 
-            // Retrofit Call + Restaurant ID if it exists
-            if (!userChosenRestaurantId.isEmpty()) {
-                checkYourLunchDetails(userChosenRestaurantId);
-            // Else, dsplay AlertDialog with no restaurant
-            } else {
-                showYourLunchAlertDialog("No current", "Lunch");
+                // Retrofit Call + Restaurant ID if it exists
+                if (!userChosenRestaurantId.isEmpty()) {
+                    checkYourLunchDetails(userChosenRestaurantId);
+                    // Else, dsplay AlertDialog with no restaurant
+                } else {
+                    showYourLunchAlertDialog("No current", "Lunch");
+                }
             }
-        }
 
-     });
+        });
 
     }
 
@@ -728,11 +727,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // -------------
 
 
-    public void callRetrofit(final double latitude, final double longitude, int PROXIMITY_RADIUS) {
+    public void callRetrofit(double latitude, double longitude, int PROXIMITY_RADIUS) {
 
-        GoogleApiInterface service = GoogleMapsClient.getClient().create(GoogleApiInterface.class);
+        String type = "restaurant";
+        String url = "https://maps.googleapis.com/maps/";
 
-        Call<Example> call = service.getNearbyRestaurants("restaurant", latitude + "," + longitude, PROXIMITY_RADIUS);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        GoogleApiInterface service = retrofit.create(GoogleApiInterface.class);
+
+        Call<Example> call = service.getNearbyRestaurants(type, latitude + "," + longitude, PROXIMITY_RADIUS);
 
         call.enqueue(new Callback<Example>() {
             @Override
@@ -741,7 +748,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 try {
 
                     restaurantResults = response.body().getResults();
-                    Log.w("Nearby Restaurants LIST", new GsonBuilder().setPrettyPrinting().create().toJson(restaurantResults));
+                    //Log.w("Nearby Restaurants LIST", new GsonBuilder().setPrettyPrinting().create().toJson(restaurantResults));
                     increment = 1;
                     listSize = restaurantResults.size();
 
@@ -749,9 +756,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void subscribe(ObservableEmitter<DocumentSnapshot> e) throws Exception {
                             for (Result result : restaurantResults) {
-                                /* callback object now knows which is the last request so it can emit the onComplete */
-                                CallbackFirestore callbackInstance = new CallbackFirestore(e, result);
-//                                i++;
+                                CallbackFirestore callbackInstance = new CallbackFirestore(e, result, "like");
                                 RestaurantHelper.getNumberOfLikes(result.getPlaceId()).addOnSuccessListener(callbackInstance);
                             }
                         }
@@ -774,9 +779,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         @Override
                         public void onComplete() {
-                            //startMapFragmentWithBundle(restaurantResults);
+                            increment = 1;
                             doThirdCall(restaurantResults);
-
                         }
                     });
 
@@ -801,14 +805,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void subscribe(ObservableEmitter<DocumentSnapshot> e) throws Exception {
                 for (Result result : results) {
-                    /* callback object now knows which is the last request so it can emit the onComplete */
-                    CallbackFirestore2 callbackInstance2 = new CallbackFirestore2(e, result);
-//                                i++;
-                    RestaurantHelper.getNumberOfPeopleJoining(result.getPlaceId()).addOnSuccessListener(callbackInstance2);
+                    CallbackFirestore callbackInstance = new CallbackFirestore(e, result, "join");
+                    RestaurantHelper.getNumberOfPeopleJoining(result.getPlaceId()).addOnSuccessListener(callbackInstance);
                 }
             }
-
-
         });
         observable2.subscribe(new Observer<DocumentSnapshot>() {
             @Override
@@ -816,14 +816,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 Log.d("doThirdCall::OnSub", "Third call error");
 
-
             }
 
             @Override
             public void onNext(DocumentSnapshot documentSnapshot) {
 
                 Log.d("doThirdCall::OnNext", "Third call error");
-
 
             }
 
@@ -833,14 +831,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d("doThirdCall::onError", "Third call error");
 
 
-
             }
 
             @Override
             public void onComplete() {
 
                 Log.d("doThirdCall::onComplete", "Third call error");
-                startMapFragmentWithBundle(results);
+                startRestaurantFragmentWithBundle(results);
 
             }
         });
@@ -849,12 +846,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public class CallbackFirestore implements OnSuccessListener<DocumentSnapshot> {
         private final ObservableEmitter<DocumentSnapshot> emitter;
-        //        private final boolean last;
         private Result result;
+        private String function;
 
-        public CallbackFirestore(ObservableEmitter<DocumentSnapshot> e, Result result) {
+        public CallbackFirestore(ObservableEmitter<DocumentSnapshot> e, Result result, String function) {
             this.emitter = e;
             this.result = result;
+            this.function = function;
         }
 
         @Override
@@ -862,7 +860,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.e("Success", value.toString());
             Restaurant restaurant = value.toObject(Restaurant.class);
             if (restaurant != null){
-                result.setNumberOfLikes(restaurant.getNumberOfLikes());
+                if(function.equals("like"))
+                    result.setNumberOfLikes(restaurant.getNumberOfLikes());
+                else if(function.equals("join"))
+                    result.setNumberOfPeopleJoining(restaurant.getNumberOfPeopleJoining());
             }
             if (increment == listSize) {
                 Log.e("Complete", "Complete");
@@ -872,33 +873,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public class CallbackFirestore2 implements OnSuccessListener<DocumentSnapshot> {
-        private final ObservableEmitter<DocumentSnapshot> emitter;
-        //        private final boolean last;
-        private Result result;
 
-        public CallbackFirestore2(ObservableEmitter<DocumentSnapshot> e, Result result) {
-            this.emitter = e;
-            this.result = result;
-        }
-
-        @Override
-        public void onSuccess(DocumentSnapshot value) {
-            Log.e("Success", value.toString());
-            Restaurant restaurant = value.toObject(Restaurant.class);
-            if (restaurant != null){
-                result.setNumberOfPeopleJoining(restaurant.getNumberOfPeopleJoining());
-            }
-            if (secondIncrement == secondListSize) {
-                Log.e("Complete", "Complete");
-                emitter.onComplete();
-            }
-            secondIncrement++;
-        }
-    }
-
-
-    private void startMapFragmentWithBundle(final List<Result> results) {
+    private void startRestaurantFragmentWithBundle(final List<Result> results) {
 
         System.out.println("callRetrofit::OnComplete");
 

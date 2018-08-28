@@ -50,7 +50,7 @@
     <string name="restaurant_view_distance">Distance</string>
     <string name="restaurant_view_opening_times">ouvert/fermé</string>
     <string name="restaurant_view_stars">étoiles</string>
-    <string name="restaurant_view_workmates">collègues</string>
+    <string name="restaurant_view_workmates">0</string>
 
 
     <!-- Marker Strings -->

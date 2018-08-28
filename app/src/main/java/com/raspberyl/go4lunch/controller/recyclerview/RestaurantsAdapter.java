@@ -34,9 +34,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
     private double longitude;
     private double latitude;
 
-    private int numberOfUsers;
-
-    private List<User> mUserList;
 
     // Constructors
     public RestaurantsAdapter(List<Result> mRestaurantList, Context mContext) {
@@ -82,49 +79,78 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
                 holder.openingTimes.setText("Closed Now");
             }
 
-        }catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             holder.openingTimes.setText("Error?");
         }
 
         // Restaurant distance (m)
-            // Set current lat/long location
+        // Set current lat/long location
         Location current_location = new Location("locationA");
         current_location.setLatitude(latitude);
         current_location.setLongitude(longitude);
-             // Set targeted lat/long location
+        // Set targeted lat/long location
         Location restaurant_location = new Location("locationB");
         restaurant_location.setLatitude(result.getGeometry().getLocation().getLat());
         restaurant_location.setLongitude(result.getGeometry().getLocation().getLng());
-             // Calculate distance between A and B locations (m)
+        // Calculate distance between A and B locations (m)
         double distance = current_location.distanceTo(restaurant_location);
-             // Round value to int (m)
+        // Round value to int (m)
         distance = Math.round(distance * 1);
         String roundedDistance = String.valueOf((int) distance);
         String displayedDistance = roundedDistance + "m";
-             // Bind to holder
+        // Bind to holder
         holder.distance.setText(displayedDistance);
+
 
         // Restaurant workmates
         String numberOfWorkmates = String.valueOf(result.getNumberOfPeopleJoining());
-        holder.workmateNumber.setText(numberOfWorkmates);
+        String displayedNumberOfWorkmates = "(" + numberOfWorkmates + ")";
+
+        if (result.getNumberOfPeopleJoining() != 0) {
+            holder.workmateNumber.setText(displayedNumberOfWorkmates);
+        } else {
+            holder.workmateNumber.setVisibility(View.INVISIBLE);
+            holder.workmatePicture.setVisibility(View.INVISIBLE);
+        }
 
         // Restaurant likes
-        String numberOfLikes = String.valueOf(result.getNumberOfLikes());
-        holder.stars.setText(numberOfLikes);
+        // 1 Star: > 1 && <=5
+        // 2 Stars: >5 && <=10
+        // 3 Stars: >10
+        if (result.getNumberOfLikes() == 0) {
+            holder.star1.setVisibility(View.INVISIBLE);
+            holder.star2.setVisibility(View.INVISIBLE);
+            holder.star3.setVisibility(View.INVISIBLE);
+        }
+        if (result.getNumberOfLikes() >= 1 && result.getNumberOfLikes() <= 5) {
+            holder.star1.setVisibility(View.INVISIBLE);
+            holder.star2.setVisibility(View.INVISIBLE);
+        }
+        if (result.getNumberOfLikes() > 5 && result.getNumberOfLikes() <= 10) {
+            holder.star1.setVisibility(View.INVISIBLE);
+        }
+        if (result.getNumberOfLikes() > 10) {
+
+        }
 
         // Restaurant picture
         if (result.getPhotos().get(0).getPhotoReference() != null) {
-            String restaurantPictureUrl = "https://maps.googleapis.com/maps/api/place/photo" +
-                    "?maxwidth=100" + "&maxheight=100" +
-                    "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
-                    "&key=AIzaSyDqefrTQHVLLodQoTiQWHpIWRUofSV1SUw";
+            if (!result.getPhotos().get(0).getPhotoReference().isEmpty()) {
+                String restaurantPictureUrl = "https://maps.googleapis.com/maps/api/place/photo" +
+                        "?maxwidth=100" + "&maxheight=100" +
+                        "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
+                        "&key=AIzaSyDqefrTQHVLLodQoTiQWHpIWRUofSV1SUw";
 
-            Glide.with(mContext)
-                    .load(restaurantPictureUrl)
-                    .into(holder.picture);
+                Glide.with(mContext)
+                        .load(restaurantPictureUrl)
+                        .into(holder.picture);
+            }else{
+                Glide.with(mContext)
+                        .load(R.drawable.unknown_userpicture)
+                        .into(holder.picture);
+            }
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -137,40 +163,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsViewHold
         return this.mRestaurantList.get(position);
     }
 
-    /*
-    private void getAllUsersOnCurrentRestaurant(Result result) {
-
-        mUserList = new ArrayList<>();
-        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("users").whereEqualTo("chosenRestaurantId", result.getPlaceId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-
-                if (e != null) {
-                    // error
-                }
-
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    User user = doc.toObject(User.class);
-                    mUserList.add(user);
-                }
-
-                    numberOfUsers = mUserList.size();
-                    setNumberOfUsers(numberOfUsers);
-                    System.out.print("XYZLOP" + numberOfUsers);
-
-            }
-
-
-        });
-
-    }
-
-    public void setNumberOfUsers(int numberOfUsers) {
-        this.numberOfUsers = numberOfUsers;
-        notifyDataSetChanged();
-    }
-    */
 
 }
 
