@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -268,42 +269,38 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     // Choose restaurant (Go) Button
-    private void initGoButton(Result result) {
+    private void initGoButton(final Result result) {
 
         final String chosenRestaurantId = result.getPlace_id();
-        final String chosenRestaurantName = result.getName();
 
         mGoRestaurantButton = findViewById(R.id.restaurant_activity_go_button);
         mGoRestaurantButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Push infos on Database (Restaurant ID, Restaurant Name, & Picture URL)
-                UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                UserHelper.updateChosenRestaurantName(chosenRestaurantName, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                UserHelper.updateChosenRestaurantUrlPicture(mPhotoId, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                RestaurantHelper.getRestaurant(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                // Fetch and check if Current User has already registered a restaurant, and prevent him from selecting the same one
+                UserHelper.getChosenRestaurantId(getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                        Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+                        User currentUser = documentSnapshot.toObject(User.class);
+                        String userChosenRestaurantId = currentUser.getChosenRestaurantId();
 
-                        // If current restaurant is null, create document
-                        if (restaurant == null) {
+                        // Prevent user from registering twice on the same restaurant
+                        if (userChosenRestaurantId.equals(chosenRestaurantId)) {
 
-                            RestaurantHelper.createRestaurant(chosenRestaurantId, 0, 1);
+                            showGoDialogError();
 
-                            // Else, fetch previous value and increment by 1
                         }else{
 
-                            int numberOfPeopleJoining = restaurant.getNumberOfPeopleJoining();
-                            RestaurantHelper.updateNumberOfPeopleJoining(chosenRestaurantId, numberOfPeopleJoining + 1);
+                            showGoDialogInteractive(result, currentUser);
 
                         }
-
                     }
+
                 });
             }
+
 
         });
     }
@@ -352,6 +349,119 @@ public class RestaurantActivity extends AppCompatActivity {
                 getResources().getString(R.string.alertdialog_error),
                 getResources().getString(R.string.alertdialog_content_no_website_error),
                 getResources().getString(R.string.alertdialog_button_neutral));
+    }
+
+    private void showGoDialogError() {
+        AlertDialogUtil dialogUtil = new AlertDialogUtil();
+        dialogUtil.createAlertDialog(RestaurantActivity.this,
+                getResources().getString(R.string.alertdialog_error),
+                "You're already going to that restaurant",
+                getResources().getString(R.string.alertdialog_button_neutral));
+    }
+
+
+    private void showGoDialogInteractive(final Result result, final User currentUser) {
+
+        // Build an AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(RestaurantActivity.this, R.style.AlertDialog_Style);
+        // Set Title and Message content
+        builder.setTitle("Go4Lunch");
+        builder.setMessage("Are you sure you want to go4thatLunch?");
+        // Positive button
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        final String chosenRestaurantId = result.getPlace_id();
+                        final String chosenRestaurantName = result.getName();
+                        final String chosenRestaurantIdField = currentUser.getChosenRestaurantId();
+
+                        if (chosenRestaurantIdField.isEmpty()) {
+                            // Push infos on Database (Restaurant ID, Restaurant Name, & Picture URL)
+                            UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            UserHelper.updateChosenRestaurantName(chosenRestaurantName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            UserHelper.updateChosenRestaurantUrlPicture(mPhotoId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            // Check if current Restaurant is already registered in DB in which case increment numberOfPeopleJoining by 1, else create it anew
+                            RestaurantHelper.getRestaurant(chosenRestaurantId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+
+                                    if (restaurant == null) {
+                                        RestaurantHelper.createRestaurant(chosenRestaurantId, 0, 1);
+
+                                    } else {
+
+                                        int numberOfPeopleJoining = restaurant.getNumberOfPeopleJoining();
+                                        int numberOfLikes = restaurant.getNumberOfLikes();
+
+                                        //RestaurantHelper.updateNumberOfPeopleJoining(chosenRestaurantIdField, numberOfPeopleJoining - 1);
+                                        RestaurantHelper.updateNumberOfPeopleJoining(chosenRestaurantId, numberOfPeopleJoining + 1);
+                                        RestaurantHelper.updateNumberOfLikes(chosenRestaurantId, numberOfLikes);
+
+                                    }
+
+                                }
+
+                            });
+
+                            // If current chosenRestaurantIdField isn't empty (User has a previously registered restaurant)
+                        } else {
+
+                            RestaurantHelper.getRestaurant(currentUser.getChosenRestaurantId()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                    Restaurant restaurant = documentSnapshot.toObject(Restaurant.class);
+
+                                    if (restaurant != null) {
+
+                                        int numberOfPeopleJoining2 = restaurant.getNumberOfPeopleJoining();
+                                        int numberOfLikes = restaurant.getNumberOfLikes();
+
+                                        // Remove 1 registered user from previous restaurant
+                                        RestaurantHelper.updateNumberOfPeopleJoining(chosenRestaurantIdField, numberOfPeopleJoining2 - 1);
+
+                                        // Update new infos into Users
+                                        UserHelper.updateChosenRestaurantId(chosenRestaurantId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        UserHelper.updateChosenRestaurantName(chosenRestaurantName, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        UserHelper.updateChosenRestaurantUrlPicture(mPhotoId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                                        // Create new restaurant entry into DB
+                                        RestaurantHelper.createRestaurant(chosenRestaurantId, 0, numberOfPeopleJoining2);
+
+
+                                    }else{
+
+                                        //RestaurantHelper.createRestaurant(chosenRestaurantId, 0, 1);
+                                    }
+
+
+
+                                }
+
+                            });
+
+
+                        }
+                    }
+                });
+
+
+
+        // Negative button
+        builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+            }
+        });
+
+        builder.show();
+    }
+
+    protected FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
 }
